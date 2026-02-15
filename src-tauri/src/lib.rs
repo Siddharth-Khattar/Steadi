@@ -24,10 +24,8 @@ pub fn run() {
         ])
         .setup(|app| {
             // Cmd+Shift+S on macOS, Ctrl+Shift+S on Windows
-            let toggle_shortcut = Shortcut::new(
-                Some(Modifiers::SUPER | Modifiers::SHIFT),
-                Code::KeyS,
-            );
+            let toggle_shortcut =
+                Shortcut::new(Some(Modifiers::SUPER | Modifiers::SHIFT), Code::KeyS);
             app.global_shortcut().register(toggle_shortcut)?;
 
             // Create overlay on startup
