@@ -90,6 +90,19 @@ jobs:
           releaseName: "Steadi ${{ github.ref_name }}"
           releaseDraft: true
           releaseBody: |
+            ## Install
+
+            **Homebrew** (recommended):
+            ```sh
+            brew tap siddharth-khattar/steadi
+            brew install --cask steadi
+            ```
+
+            **Shell script**:
+            ```sh
+            curl -fsSL https://raw.githubusercontent.com/Siddharth-Khattar/Steadi/main/install.sh | sh
+            ```
+
             ## Downloads
 
             | Platform | File |
@@ -97,6 +110,10 @@ jobs:
             | macOS (Apple Silicon) | `Steadi_*_aarch64.dmg` |
             | macOS (Intel) | `Steadi_*_x64.dmg` |
             | Windows | `Steadi_*_x64-setup.exe` |
+
+            > **macOS Gatekeeper note:** Steadi is not code-signed. If you download a DMG manually,
+            > macOS may show "app is damaged." Use one of the install methods above, or after a
+            > manual install run: `xattr -cr /Applications/Steadi.app`
 
             See `checksums-sha256.txt` for file integrity verification.
           args: ${{ matrix.args }} ${{ steps.sign-check.outputs.sign_args }}

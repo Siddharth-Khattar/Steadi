@@ -1,0 +1,61 @@
+# ABOUTME: Pushes an updated Homebrew cask to the homebrew-steadi tap on stable releases.
+# ABOUTME: Renders .github/cask-template.rb with the release version and SHA-256 hashes.
+
+name: Update Homebrew Cask
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  update-cask:
+    if: ${{ !github.event.release.prerelease }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Download macOS DMGs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p dmgs
+          gh release download "$GITHUB_REF_NAME" \
+            --repo "${{ github.repository }}" \
+            --dir dmgs \
+            --pattern "*_aarch64.dmg" \
+            --pattern "*_x64.dmg"
+
+      - name: Compute SHA-256
+        id: sha
+        run: |
+          SHA_ARM=$(sha256sum dmgs/*_aarch64.dmg | awk '{print $1}')
+          SHA_INTEL=$(sha256sum dmgs/*_x64.dmg | awk '{print $1}')
+          echo "arm=${SHA_ARM}" >> "$GITHUB_OUTPUT"
+          echo "intel=${SHA_INTEL}" >> "$GITHUB_OUTPUT"
+
+      - name: Render cask from template
+        run: |
+          sed \
+            -e 's/__VERSION__/${{ steps.version.outputs.version }}/g' \
+            -e 's/__SHA_ARM__/${{ steps.sha.outputs.arm }}/g' \
+            -e 's/__SHA_INTEL__/${{ steps.sha.outputs.intel }}/g' \
+            .github/cask-template.rb > steadi.rb
+
+      - name: Push cask to tap
+        env:
+          TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        run: |
+          git clone "https://x-access-token:${TAP_TOKEN}@github.com/Siddharth-Khattar/homebrew-steadi.git" tap
+          mkdir -p tap/Casks
+          cp steadi.rb tap/Casks/steadi.rb
+          cd tap
+          git diff --quiet && echo "No changes to commit" && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Casks/steadi.rb
+          git commit -m "Update Steadi to ${{ steps.version.outputs.version }}"
+          git push
