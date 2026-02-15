@@ -5,33 +5,33 @@
 See: .planning/PROJECT.md (updated 2026-02-15)
 
 **Core value:** The teleprompter overlay must be completely invisible during screen sharing while scrolling in sync with the user's voice
-**Current focus:** Phase 1 - Platform Validation Spike
+**Current focus:** Phase 1 complete -- ready for Phase 2 (Script Editor)
 
 ## Current Position
 
-Phase: 1 of 5 (Platform Validation Spike)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-02-15 -- Completed 01-02-PLAN.md (frontend UI for overlay and main windows)
+Phase: 1 of 5 (Platform Validation Spike) -- COMPLETE
+Plan: 3 of 3 in Phase 1 (all complete)
+Status: Phase 1 complete, ready for Phase 2 planning
+Last activity: 2026-02-15 -- Completed 01-03-PLAN.md (production build + screen share invisibility validation)
 
-Progress: [==........] 14%
+Progress: [===.......] 21%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: 8 min
-- Total execution time: 0.3 hours
+- Total plans completed: 3
+- Average duration: 15 min
+- Total execution time: 0.75 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Platform Validation Spike | 2/3 | 15 min | 8 min |
+| 1. Platform Validation Spike | 3/3 | 45 min | 15 min |
 
 **Recent Trend:**
-- Last 5 plans: 13 min, 2 min
-- Trend: accelerating
+- Last 5 plans: 13 min, 2 min, 30 min
+- Trend: stable (plan 3 included human testing time)
 
 *Updated after each plan completion*
 
@@ -51,19 +51,24 @@ Recent decisions affecting current work:
 - [01-02]: Overlay renders text on transparent background without GlassPanel -- native vibrancy provides frosted glass
 - [01-02]: GlassPanel is CSS refinement layer (bg-white/5, shadow, border) on top of native OS vibrancy
 - [01-02]: Separate App.tsx per window entry point pattern established
+- [01-03]: HTML entry points must be at root level for Vite production asset paths to resolve correctly
+- [01-03]: GO for Phase 2 -- overlay invisibility validated on macOS with Zoom, Meet, web recorders
+- [01-03]: Design direction: notch-blending dark overlay preferred over glassmorphic (deferred to Phase 3)
 
 ### Pending Todos
 
 - Replace placeholder icons with proper Steadi branding icons
+- Windows invisibility testing when Windows dev environment is available
+- Investigate macOS 15+ ScreenCaptureKit bypass if specific apps found to capture overlay
 
 ### Blockers/Concerns
 
-- [Research]: macOS 15+ ScreenCaptureKit ignores NSWindow.sharingType = .none -- highest risk, must investigate workarounds in Phase 1
-- [Research]: Windows WebView2 + SetWindowDisplayAffinity has documented COMException conflicts with transparent windows
+- [Research]: macOS 15+ ScreenCaptureKit ignores NSWindow.sharingType = .none -- not observed in testing (Zoom, Meet, web recorders all respect it), but remains a concern for ScreenCaptureKit-native capture tools
+- [Research]: Windows WebView2 + SetWindowDisplayAffinity has documented COMException conflicts with transparent windows -- deferred until Windows testing
 - [Research]: SFSpeechRecognizer timestamp resets after ~60s -- must use text-matching, not timestamps, for scroll positioning
 
 ## Session Continuity
 
-Last session: 2026-02-15T19:27:15Z
-Stopped at: Completed 01-02-PLAN.md
+Last session: 2026-02-15T20:01:05Z
+Stopped at: Completed 01-03-PLAN.md -- Phase 1 complete
 Resume file: None
