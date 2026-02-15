@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 1 of 5 (Platform Validation Spike)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-02-15 -- Completed 01-01-PLAN.md (scaffold + overlay backend)
+Last activity: 2026-02-15 -- Completed 01-02-PLAN.md (frontend UI for overlay and main windows)
 
-Progress: [=.........] 7%
+Progress: [==........] 14%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 13 min
-- Total execution time: 0.2 hours
+- Total plans completed: 2
+- Average duration: 8 min
+- Total execution time: 0.3 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Platform Validation Spike | 1/3 | 13 min | 13 min |
+| 1. Platform Validation Spike | 2/3 | 15 min | 8 min |
 
 **Recent Trend:**
-- Last 5 plans: 13 min
-- Trend: baseline
+- Last 5 plans: 13 min, 2 min
+- Trend: accelerating
 
 *Updated after each plan completion*
 
@@ -48,6 +48,9 @@ Recent decisions affecting current work:
 - [01-01]: WebviewUrl imported from tauri crate root, not tauri::webview (Tauri 2.10 API change)
 - [01-01]: Overlay created dynamically in Rust setup closure with WebviewWindowBuilder
 - [01-01]: Dual vibrancy effects (HudWindow + Acrylic) for cross-platform frosted glass
+- [01-02]: Overlay renders text on transparent background without GlassPanel -- native vibrancy provides frosted glass
+- [01-02]: GlassPanel is CSS refinement layer (bg-white/5, shadow, border) on top of native OS vibrancy
+- [01-02]: Separate App.tsx per window entry point pattern established
 
 ### Pending Todos
 
@@ -61,6 +64,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-15T19:21:25Z
-Stopped at: Completed 01-01-PLAN.md
+Last session: 2026-02-15T19:27:15Z
+Stopped at: Completed 01-02-PLAN.md
 Resume file: None
