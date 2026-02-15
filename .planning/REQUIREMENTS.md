@@ -103,49 +103,49 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PLAT-01 | — | Pending |
-| PLAT-02 | — | Pending |
-| PLAT-03 | — | Pending |
-| PLAT-04 | — | Pending |
-| PLAT-05 | — | Pending |
-| PLAT-06 | — | Pending |
-| PLAT-07 | — | Pending |
-| PLAT-08 | — | Pending |
-| PLAT-09 | — | Pending |
-| OVRL-01 | — | Pending |
-| OVRL-02 | — | Pending |
-| OVRL-03 | — | Pending |
-| OVRL-04 | — | Pending |
-| OVRL-05 | — | Pending |
-| OVRL-06 | — | Pending |
-| OVRL-07 | — | Pending |
-| OVRL-08 | — | Pending |
-| SCRL-01 | — | Pending |
-| SCRL-02 | — | Pending |
-| SCRL-03 | — | Pending |
-| SCRL-04 | — | Pending |
-| SCRL-05 | — | Pending |
-| EDIT-01 | — | Pending |
-| EDIT-02 | — | Pending |
-| EDIT-03 | — | Pending |
-| EDIT-04 | — | Pending |
-| EDIT-05 | — | Pending |
-| EDIT-06 | — | Pending |
-| CTRL-01 | — | Pending |
-| CTRL-02 | — | Pending |
-| CTRL-03 | — | Pending |
-| CTRL-04 | — | Pending |
-| CTRL-05 | — | Pending |
-| DSGN-01 | — | Pending |
-| DSGN-02 | — | Pending |
-| DSGN-03 | — | Pending |
-| DSGN-04 | — | Pending |
+| PLAT-01 | Phase 1 | Pending |
+| PLAT-02 | Phase 1 | Pending |
+| PLAT-03 | Phase 1 | Pending |
+| PLAT-04 | Phase 1 | Pending |
+| PLAT-05 | Phase 1 | Pending |
+| PLAT-06 | Phase 1 | Pending |
+| PLAT-07 | Phase 1 | Pending |
+| PLAT-08 | Phase 1 | Pending |
+| PLAT-09 | Phase 1 | Pending |
+| OVRL-01 | Phase 1 | Pending |
+| OVRL-02 | Phase 3 | Pending |
+| OVRL-03 | Phase 3 | Pending |
+| OVRL-04 | Phase 3 | Pending |
+| OVRL-05 | Phase 3 | Pending |
+| OVRL-06 | Phase 3 | Pending |
+| OVRL-07 | Phase 3 | Pending |
+| OVRL-08 | Phase 3 | Pending |
+| SCRL-01 | Phase 4 | Pending |
+| SCRL-02 | Phase 4 | Pending |
+| SCRL-03 | Phase 5 | Pending |
+| SCRL-04 | Phase 3 | Pending |
+| SCRL-05 | Phase 3 | Pending |
+| EDIT-01 | Phase 2 | Pending |
+| EDIT-02 | Phase 2 | Pending |
+| EDIT-03 | Phase 2 | Pending |
+| EDIT-04 | Phase 2 | Pending |
+| EDIT-05 | Phase 2 | Pending |
+| EDIT-06 | Phase 2 | Pending |
+| CTRL-01 | Phase 3 | Pending |
+| CTRL-02 | Phase 3 | Pending |
+| CTRL-03 | Phase 3 | Pending |
+| CTRL-04 | Phase 3 | Pending |
+| CTRL-05 | Phase 3 | Pending |
+| DSGN-01 | Phase 1 | Pending |
+| DSGN-02 | Phase 1 | Pending |
+| DSGN-03 | Phase 2 | Pending |
+| DSGN-04 | Phase 3 | Pending |
 
 **Coverage:**
 - v1 requirements: 37 total
-- Mapped to phases: 0
-- Unmapped: 37 ⚠️
+- Mapped to phases: 37
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-15*
-*Last updated: 2026-02-15 after initial definition*
+*Last updated: 2026-02-15 after roadmap creation*
