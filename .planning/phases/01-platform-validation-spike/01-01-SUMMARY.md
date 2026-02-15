@@ -162,6 +162,14 @@ None - no external service configuration required.
 - `cargo tauri dev` should launch both windows; visual verification is plan 01-03's scope
 - Placeholder icons should be replaced with proper Steadi branding icons (can be deferred)
 
+## Post-Completion Changes
+
+The following changes were made to files created in this plan during later design iteration (post 01-03):
+
+- **overlay.rs:** Vibrancy effects (HudWindow + Acrylic) removed. Replaced with solid black CSS background + native CALayer for bottom-only rounded corners via objc2-app-kit. Overlay dimensions changed to 40% width, 140pt height.
+- **Cargo.toml:** Added objc2-app-kit, objc2-quartz-core, objc2-foundation as macOS-only deps.
+- **tsconfig.node.json:** Added `types: ["node"]` for Vite config compilation (fix applied during orchestrator phase).
+
 ---
 *Phase: 01-platform-validation-spike*
 *Completed: 2026-02-15*

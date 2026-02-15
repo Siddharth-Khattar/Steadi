@@ -12,7 +12,7 @@ Steadi delivers a cross-platform invisible teleprompter in five phases, front-lo
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Platform Validation Spike** - Prove overlay invisibility works on macOS and Windows; establish Tauri multi-window app with glassmorphic design primitives
+- [x] **Phase 1: Platform Validation Spike** - Prove overlay invisibility works on macOS and Windows; establish Tauri multi-window app with dark overlay design
 - [ ] **Phase 2: Script Editor** - Notes-app-style markdown editor with file tree and local persistence
 - [ ] **Phase 3: Overlay and Auto-Scroll** - Fully functional teleprompter overlay with controls, auto-scroll, and markdown rendering
 - [ ] **Phase 4: Voice Sync (macOS)** - Word-level speech tracking via SFSpeechRecognizer with auto-highlighting
@@ -33,9 +33,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Scaffold Tauri 2 project and implement Rust overlay backend with screen capture exclusion and global shortcut
-- [ ] 01-02-PLAN.md — Build frontend UI for overlay teleprompter display and main window with glassmorphic design primitives
-- [ ] 01-03-PLAN.md — Production build verification and screen share invisibility testing across apps
+- [x] 01-01-PLAN.md — Scaffold Tauri 2 project and implement Rust overlay backend with screen capture exclusion and global shortcut
+- [x] 01-02-PLAN.md — Build frontend UI for overlay teleprompter display and main window with glassmorphic design primitives
+- [x] 01-03-PLAN.md — Production build verification and screen share invisibility testing across apps
 
 ### Phase 2: Script Editor
 **Goal**: Users can write, organize, and manage teleprompter scripts in a polished notes-app-style editor
@@ -107,7 +107,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Platform Validation Spike | 0/3 | Planned | - |
+| 1. Platform Validation Spike | 3/3 | Complete (macOS validated, Windows deferred) | 2026-02-15 |
 | 2. Script Editor | 0/3 | Not started | - |
 | 3. Overlay and Auto-Scroll | 0/4 | Not started | - |
 | 4. Voice Sync (macOS) | 0/2 | Not started | - |

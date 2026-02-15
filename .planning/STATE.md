@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-15)
 
 **Core value:** The teleprompter overlay must be completely invisible during screen sharing while scrolling in sync with the user's voice
-**Current focus:** Phase 1 complete -- ready for Phase 2 (Script Editor)
+**Current focus:** Phase 1 complete (macOS validated, design iterated) — ready for Phase 2 (Script Editor)
 
 ## Current Position
 
-Phase: 1 of 5 (Platform Validation Spike) -- COMPLETE
-Plan: 3 of 3 in Phase 1 (all complete)
+Phase: 1 of 5 (Platform Validation Spike) — COMPLETE
+Plan: 3 of 3 in Phase 1 (all complete + post-plan design iteration)
 Status: Phase 1 complete, ready for Phase 2 planning
-Last activity: 2026-02-15 -- Completed 01-03-PLAN.md (production build + screen share invisibility validation)
+Last activity: 2026-02-15 — Design iteration: solid black overlay with native bottom-only rounded corners
 
-Progress: [===.......] 21%
+Progress: [██........] 20%
 
 ## Performance Metrics
 
@@ -47,19 +47,22 @@ Recent decisions affecting current work:
 - [Roadmap]: macOS voice before Windows voice -- defines adapter trait contract
 - [01-01]: WebviewUrl imported from tauri crate root, not tauri::webview (Tauri 2.10 API change)
 - [01-01]: Overlay created dynamically in Rust setup closure with WebviewWindowBuilder
-- [01-01]: Dual vibrancy effects (HudWindow + Acrylic) for cross-platform frosted glass
-- [01-02]: Overlay renders text on transparent background without GlassPanel -- native vibrancy provides frosted glass
-- [01-02]: GlassPanel is CSS refinement layer (bg-white/5, shadow, border) on top of native OS vibrancy
+- [01-02]: GlassPanel is CSS refinement layer (bg-white/5, shadow, border) — available for future phases
 - [01-02]: Separate App.tsx per window entry point pattern established
 - [01-03]: HTML entry points must be at root level for Vite production asset paths to resolve correctly
-- [01-03]: GO for Phase 2 -- overlay invisibility validated on macOS with Zoom, Meet, web recorders
-- [01-03]: Design direction: notch-blending dark overlay preferred over glassmorphic (deferred to Phase 3)
+- [01-03]: GO for Phase 2 — overlay invisibility validated on macOS with Zoom, Meet, web recorders
+- [Post-01]: **Vibrancy effects removed** — HudWindow/Acrylic replaced with solid black CSS background. Native vibrancy was inherently translucent (frosted glass) even at max alpha. User wants opaque dark overlay.
+- [Post-01]: **Native CALayer API for bottom-only rounded corners** — CSS border-radius can't affect the macOS window shape. Uses objc2-app-kit to set NSWindow contentView.layer.maskedCorners directly. Added objc2-app-kit, objc2-quartz-core, objc2-foundation as macOS-only deps.
+- [Post-01]: Overlay width reduced from 55% to 40% of screen width, height 140pt
+- [Post-01]: **Notch-blending deferred** — Placing overlay IN the menu bar area requires NSWindow.level = .statusBar or higher. macOS constrains regular windows below menu bar even at y=0. Needs dedicated research.
 
 ### Pending Todos
 
 - Replace placeholder icons with proper Steadi branding icons
 - Windows invisibility testing when Windows dev environment is available
+- Windows overlay styling (no CALayer API — needs Windows-specific approach for rounded corners and solid background)
 - Investigate macOS 15+ ScreenCaptureKit bypass if specific apps found to capture overlay
+- Research NSWindow.level = .statusBar for notch-blending overlay positioning on macOS
 
 ### Blockers/Concerns
 
@@ -69,6 +72,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-15T20:01:05Z
-Stopped at: Completed 01-03-PLAN.md -- Phase 1 complete
+Last session: 2026-02-15
+Stopped at: Phase 1 complete — all plans executed + design iteration (solid black, native bottom corners)
 Resume file: None

@@ -103,16 +103,16 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PLAT-01 | Phase 1 | Pending |
-| PLAT-02 | Phase 1 | Pending |
-| PLAT-03 | Phase 1 | Pending |
-| PLAT-04 | Phase 1 | Pending |
-| PLAT-05 | Phase 1 | Pending |
-| PLAT-06 | Phase 1 | Pending |
-| PLAT-07 | Phase 1 | Pending |
-| PLAT-08 | Phase 1 | Pending |
-| PLAT-09 | Phase 1 | Pending |
-| OVRL-01 | Phase 1 | Pending |
+| PLAT-01 | Phase 1 | Complete (human verified: Zoom macOS) |
+| PLAT-02 | Phase 1 | Deferred (Teams not tested — not installed) |
+| PLAT-03 | Phase 1 | Complete (human verified: Meet macOS) |
+| PLAT-04 | Phase 1 | Deferred (OBS not tested — not installed) |
+| PLAT-05 | Phase 1 | Deferred (no Windows machine) |
+| PLAT-06 | Phase 1 | Deferred (no Windows machine) |
+| PLAT-07 | Phase 1 | Deferred (no Windows machine) |
+| PLAT-08 | Phase 1 | Deferred (no Windows machine) |
+| PLAT-09 | Phase 1 | Complete (zero network calls verified) |
+| OVRL-01 | Phase 1 | Complete (top-center, solid dark, bottom-rounded corners) |
 | OVRL-02 | Phase 3 | Pending |
 | OVRL-03 | Phase 3 | Pending |
 | OVRL-04 | Phase 3 | Pending |
@@ -136,8 +136,8 @@
 | CTRL-03 | Phase 3 | Pending |
 | CTRL-04 | Phase 3 | Pending |
 | CTRL-05 | Phase 3 | Pending |
-| DSGN-01 | Phase 1 | Pending |
-| DSGN-02 | Phase 1 | Pending |
+| DSGN-01 | Phase 1 | Revised (dark opaque design instead of glassmorphic — user decision) |
+| DSGN-02 | Phase 1 | Revised (native CALayer API instead of vibrancy — vibrancy was too translucent) |
 | DSGN-03 | Phase 2 | Pending |
 | DSGN-04 | Phase 3 | Pending |
 
@@ -148,4 +148,4 @@
 
 ---
 *Requirements defined: 2026-02-15*
-*Last updated: 2026-02-15 after roadmap creation*
+*Last updated: 2026-02-15 after Phase 1 completion*
