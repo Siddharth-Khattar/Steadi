@@ -30,12 +30,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. The overlay renders near top-center of screen (notch-style positioning) with glassmorphic frosted-glass appearance using native vibrancy APIs
   4. Production-bundled builds (not dev mode) maintain overlay invisibility and transparency on both platforms
   5. No network calls are made by the application at any point (verified via network monitor)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
-- [ ] 01-03: TBD
+- [ ] 01-01-PLAN.md — Scaffold Tauri 2 project and implement Rust overlay backend with screen capture exclusion and global shortcut
+- [ ] 01-02-PLAN.md — Build frontend UI for overlay teleprompter display and main window with glassmorphic design primitives
+- [ ] 01-03-PLAN.md — Production build verification and screen share invisibility testing across apps
 
 ### Phase 2: Script Editor
 **Goal**: Users can write, organize, and manage teleprompter scripts in a polished notes-app-style editor
@@ -107,7 +107,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Platform Validation Spike | 0/3 | Not started | - |
+| 1. Platform Validation Spike | 0/3 | Planned | - |
 | 2. Script Editor | 0/3 | Not started | - |
 | 3. Overlay and Auto-Scroll | 0/4 | Not started | - |
 | 4. Voice Sync (macOS) | 0/2 | Not started | - |
