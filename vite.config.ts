@@ -9,6 +9,7 @@ import { resolve } from "path";
 const host = process.env.TAURI_DEV_HOST;
 
 export default defineConfig({
+  root: "src",
   plugins: [react(), tailwindcss()],
 
   clearScreen: false,
@@ -30,10 +31,12 @@ export default defineConfig({
   },
 
   build: {
+    outDir: "../dist",
+    emptyOutDir: true,
     rollupOptions: {
       input: {
-        main: resolve(__dirname, "main/index.html"),
-        overlay: resolve(__dirname, "overlay/index.html"),
+        main: resolve(__dirname, "src/main/index.html"),
+        overlay: resolve(__dirname, "src/overlay/index.html"),
       },
     },
   },
