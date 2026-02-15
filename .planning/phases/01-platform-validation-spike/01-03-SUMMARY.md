@@ -111,9 +111,32 @@ None - no external service configuration required.
 ### Phase 1 Success Criteria Assessment
 1. Transparent overlay invisible in screen shares on macOS: **VALIDATED** (Zoom, Meet, web recorders)
 2. Transparent overlay invisible on Windows: **DEFERRED** (no Windows machine)
-3. Overlay at top-center with glassmorphic appearance: **VALIDATED** (design refinement noted)
+3. Overlay at top-center with glassmorphic appearance: **REVISED** — user chose opaque dark design over glassmorphic (see Post-Execution below)
 4. Production builds maintain invisibility and transparency: **VALIDATED**
 5. Zero network calls: **VALIDATED**
+
+## Post-Execution Design Iteration
+
+After all three plans completed and human verification confirmed screen share invisibility, the user provided design feedback that drove a series of iterative changes:
+
+**Problem:** The glassmorphic frosted-glass overlay didn't match the user's vision. They wanted a solid dark overlay that blends with the MacBook notch aesthetic.
+
+**Changes made (commits 563b180 through 68e065b):**
+
+1. **Removed vibrancy effects** — HudWindow/Acrylic effects are inherently translucent. Even at alpha 255, the material shows frosted glass. Replaced with CSS `bg-black` for fully opaque background.
+
+2. **Native bottom-only rounded corners** — CSS `border-radius` can't affect the macOS window shape (the webview layer is opaque at the OS level). Added `objc2-app-kit`, `objc2-quartz-core`, `objc2-foundation` as macOS dependencies. Uses `with_webview()` to access NSWindow, then sets `contentView.layer.cornerRadius(16)` with `maskedCorners` for bottom-left + bottom-right only.
+
+3. **Reduced overlay dimensions** — Width from 55% to 40% of screen. Height from 200pt to 140pt. Removed unnecessary notch-area spacer.
+
+4. **Notch-blending deferred** — macOS constrains regular windows below the menu bar. Placing the overlay IN the notch area requires `NSWindow.level = .statusBar` or higher. This needs dedicated research and is deferred.
+
+**New dependencies added:**
+- `objc2-app-kit = "0.3"` (macOS only)
+- `objc2-quartz-core = "0.3"` (macOS only)
+- `objc2-foundation = "0.3"` (macOS only)
+
+**Key technical insight:** On macOS, transparent window effects (vibrancy) and solid backgrounds are mutually exclusive. You can't have native vibrancy that looks opaque. For solid dark windows with selective corner rounding, direct CALayer API access via objc2 crates is required.
 
 ---
 *Phase: 01-platform-validation-spike*

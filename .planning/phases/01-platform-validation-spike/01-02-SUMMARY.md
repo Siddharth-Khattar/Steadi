@@ -110,6 +110,12 @@ None - no external service configuration required.
 - `cargo tauri dev` should launch main window with controls and overlay with teleprompter text
 - GlassPanel component is ready for reuse in Phase 2 editor UI
 
+## Post-Completion Changes
+
+The following changes were made to files created in this plan during later design iteration (post 01-03):
+
+- **overlay/App.tsx:** Removed reliance on native vibrancy for background. Added `bg-black` CSS class for solid dark background. Removed notch spacer and glassmorphic-specific comments. Text styling simplified (removed drop-shadow-sm since background is solid).
+
 ---
 *Phase: 01-platform-validation-spike*
 *Completed: 2026-02-15*

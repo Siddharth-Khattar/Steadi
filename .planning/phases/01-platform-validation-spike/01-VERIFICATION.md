@@ -16,13 +16,16 @@ gaps:
       - "Verification of WebView2 transparent window + SetWindowDisplayAffinity interaction (research flagged COMException risk)"
   - truth: "The overlay renders near top-center of screen (notch-style positioning) with glassmorphic frosted-glass appearance using native vibrancy APIs"
     status: partial
-    reason: "Positioning and vibrancy are implemented and working. However, human testing confirmed the overlay sits BELOW the notch rather than blending with it, and the glassmorphic style does not match the user's desired dark/black notch aesthetic. The user specifically noted they want a notch-blending dark overlay, not frosted glass."
+    reason: "Design iterated post-verification: vibrancy effects replaced with solid black CSS background + native CALayer for bottom-only rounded corners. Overlay is now opaque dark at top-center below menu bar. Notch-blending (placing window IN menu bar area) deferred — requires NSWindow.level research."
     artifacts:
       - path: "src-tauri/src/overlay.rs"
-        issue: "y=0 positioning places overlay below notch on notched MacBooks; glassmorphic HudWindow style doesn't match desired dark/black notch aesthetic"
+        issue: "Overlay sits below menu bar (macOS constrains windows). Notch-blending needs NSWindow.level = .statusBar"
+    resolved:
+      - "Design iteration: solid black opaque background via CSS bg-black (vibrancy removed)"
+      - "Bottom-only rounded corners via native CALayer maskedCorners API (objc2-app-kit)"
+      - "Overlay width reduced to 40% screen width, height 140pt"
     missing:
-      - "Positioning adjustment to account for notch area on MacBook displays (y offset into safe area or notch-blending)"
-      - "Design iteration: dark/black opaque style instead of frosted-glass glassmorphic (user feedback)"
+      - "Notch-blending positioning (NSWindow.level research needed)"
 ---
 
 # Phase 1: Platform Validation Spike Verification Report
