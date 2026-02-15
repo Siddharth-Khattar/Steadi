@@ -1,7 +1,7 @@
 {
   "productName": "Steadi",
   "version": "0.1.0",
-  "identifier": "com.steadi.app",
+  "identifier": "com.steadi.teleprompter",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
