@@ -65,11 +65,16 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k actions build.keychain
           rm certificate.p12
 
-      - name: Notice — code signing skipped
-        if: runner.os == 'macOS' && env.APPLE_CERTIFICATE == ''
+      - name: Check code signing configuration
+        id: sign-check
+        if: runner.os == 'macOS'
         env:
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
-        run: echo "::notice::macOS code signing skipped — APPLE_CERTIFICATE secret is not set"
+        run: |
+          if [ -z "$APPLE_CERTIFICATE" ]; then
+            echo "sign_args=--no-sign" >> "$GITHUB_OUTPUT"
+            echo "::notice::Code signing skipped — APPLE_CERTIFICATE not set"
+          fi
 
       - uses: tauri-apps/tauri-action@v0
         env:
@@ -94,7 +99,7 @@ jobs:
             | Windows | `Steadi_*_x64-setup.exe` |
 
             See `checksums-sha256.txt` for file integrity verification.
-          args: ${{ matrix.args }}
+          args: ${{ matrix.args }} ${{ steps.sign-check.outputs.sign_args }}
 
   checksums:
     name: Generate checksums
