@@ -1,0 +1,11 @@
+{
+  "identifier": "main-capability",
+  "description": "Permissions for the main control window",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "global-shortcut:allow-register",
+    "global-shortcut:allow-unregister",
+    "global-shortcut:allow-is-registered"
+  ]
+}
