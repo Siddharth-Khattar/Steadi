@@ -19,8 +19,8 @@ pub fn create_overlay(app: &AppHandle) -> tauri::Result<WebviewWindow> {
 
     let scale = monitor.scale_factor();
     let screen_width = monitor.size().width as f64 / scale;
-    let overlay_width = screen_width * 0.55;
-    let overlay_height = 200.0;
+    let overlay_width = screen_width * 0.4;
+    let overlay_height = 140.0;
     let x = (screen_width - overlay_width) / 2.0;
     let y = 0.0;
 

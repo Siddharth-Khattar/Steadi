@@ -1,31 +1,21 @@
-// ABOUTME: Overlay window teleprompter display with dark notch-blending design.
-// ABOUTME: Solid black background blends with MacBook notch, content below notch area.
+// ABOUTME: Overlay window teleprompter display with dark compact design.
+// ABOUTME: Solid black background, positioned below menu bar, bottom-rounded corners.
 
 /**
  * The overlay window is transparent (set in index.html). The dark background
- * comes from CSS, not native vibrancy. This creates a solid black look that
- * blends with the MacBook notch. Bottom corners are rounded; top edge is flush
- * with the screen edge.
+ * comes from CSS. Bottom corners are rounded; top edge aligns with the
+ * window's position (below menu bar on macOS).
  *
- * Layout:
- * ┌──────────┬───────┬──────────┐  ← top of screen (flush)
- * │  (space) │ NOTCH │  (space) │  ← notch row: behind physical notch is hidden
- * ├──────────┴───────┴──────────┤
- * │       teleprompter text     │  ← content starts below notch height
- * └─────────────────────────────┘  ← rounded bottom corners
- *
- * On Windows (no notch), the spacer is smaller and the overlay sits flush
- * at the top edge as a dark rectangle.
+ * Note: Notch-blending (placing the window IN the menu bar area) requires
+ * NSWindow.level = .statusBar or higher — deferred to a future iteration.
+ * For now the overlay sits just below the menu bar as a compact dark panel.
  */
 export default function OverlayApp() {
   return (
     <div className="w-full h-full flex flex-col rounded-b-2xl overflow-hidden bg-black/95">
-      {/* Notch-area spacer: ~37pt on notch Macs, content is hidden behind notch anyway */}
-      <div className="h-9.5 shrink-0" />
-
       {/* Teleprompter text content */}
-      <div className="flex-1 flex items-start justify-center px-6 pb-4 overflow-hidden">
-        <div className="max-w-[85%] text-center">
+      <div className="flex-1 flex items-start justify-center px-5 py-3 overflow-hidden">
+        <div className="max-w-[90%] text-center">
           <p className="text-white/90 text-lg font-medium leading-relaxed">
             Good morning everyone, and welcome to this quarter's business review.
             I want to start by thanking each of you for the incredible work
