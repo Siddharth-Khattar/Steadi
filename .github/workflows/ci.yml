@@ -51,8 +51,6 @@ jobs:
     name: Build (full Tauri compile)
     needs: [frontend-check, rust-check]
     runs-on: macos-latest
-    env:
-      APPLE_SIGNING_IDENTITY: ""
     steps:
       - uses: actions/checkout@v4
 
@@ -69,4 +67,5 @@ jobs:
 
       - run: npm ci
       # tauri build runs beforeBuildCommand (npm run build) internally
-      - run: npx tauri build
+      # --no-sign skips code signing (no Apple Developer credentials in CI)
+      - run: npx tauri build --no-sign
