@@ -1,13 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "../styles/globals.css";
-
-function App() {
-  return <div>Overlay</div>;
-}
+import OverlayApp from "./App";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <App />
+    <OverlayApp />
   </React.StrictMode>,
 );
