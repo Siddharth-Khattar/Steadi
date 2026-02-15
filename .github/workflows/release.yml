@@ -118,20 +118,37 @@ jobs:
             See `checksums-sha256.txt` for file integrity verification.
           args: ${{ matrix.args }} ${{ steps.sign-check.outputs.sign_args }}
 
+      # Pass installers to the checksums job via Actions artifacts (not gh release download)
+      # to avoid tag-name resolution issues with draft/published release conflicts.
+      - name: Collect installer artifacts
+        shell: bash
+        run: |
+          mkdir -p installers
+          find src-tauri/target -path "*/release/bundle/*" -type f \
+            \( -name "*.dmg" -o -name "*.exe" -o -name "*.msi" -o -name "*.AppImage" -o -name "*.deb" \) \
+            -exec cp {} installers/ \;
+          echo "Collected installers:"
+          ls -lh installers/
+
+      - name: Upload installer artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: installers-${{ matrix.target || matrix.os }}
+          path: installers/
+          if-no-files-found: error
+          retention-days: 1
+
   checksums:
     name: Generate checksums
     needs: [build]
     runs-on: ubuntu-latest
     steps:
-      - name: Download release artifacts
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          mkdir -p artifacts
-          gh release download "${{ github.ref_name }}" \
-            --repo "${{ github.repository }}" \
-            --dir artifacts \
-            --pattern "*.dmg" --pattern "*.exe" --pattern "*.msi" --pattern "*.AppImage" --pattern "*.deb"
+      - name: Download installer artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: installers-*
+          merge-multiple: true
+          path: artifacts
 
       - name: Generate SHA-256 checksums
         run: |

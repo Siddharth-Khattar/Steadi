@@ -16,18 +16,27 @@ jobs:
 
       - name: Extract version from tag
         id: version
-        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
 
       - name: Download macOS DMGs
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          TAG="${{ github.event.release.tag_name }}"
           mkdir -p dmgs
-          gh release download "$GITHUB_REF_NAME" \
+          gh release download "$TAG" \
             --repo "${{ github.repository }}" \
             --dir dmgs \
             --pattern "*_aarch64.dmg" \
             --pattern "*_x64.dmg"
+
+          # Validate both architectures are present
+          if ! ls dmgs/*_aarch64.dmg 1>/dev/null 2>&1 || ! ls dmgs/*_x64.dmg 1>/dev/null 2>&1; then
+            echo "::error::Missing macOS DMG artifacts in release $TAG. Ensure the Release workflow completed before publishing the draft."
+            exit 1
+          fi
 
       - name: Compute SHA-256
         id: sha
