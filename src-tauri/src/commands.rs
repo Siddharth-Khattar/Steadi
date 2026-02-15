@@ -14,5 +14,7 @@ pub fn toggle_overlay(app: AppHandle) -> Result<bool, String> {
 /// Creates the overlay window via IPC.
 #[tauri::command]
 pub fn create_overlay(app: AppHandle) -> Result<(), String> {
-    overlay::create_overlay(&app).map(|_| ()).map_err(|e| e.to_string())
+    overlay::create_overlay(&app)
+        .map(|_| ())
+        .map_err(|e| e.to_string())
 }

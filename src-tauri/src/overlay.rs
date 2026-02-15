@@ -12,9 +12,7 @@ use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindow};
 /// - Protected from screen capture (content_protected)
 /// - Positioned at top-center of screen below menu bar
 pub fn create_overlay(app: &AppHandle) -> tauri::Result<WebviewWindow> {
-    let monitor = app
-        .primary_monitor()?
-        .expect("No primary monitor found");
+    let monitor = app.primary_monitor()?.expect("No primary monitor found");
 
     let scale = monitor.scale_factor();
     let screen_width = monitor.size().width as f64 / scale;
@@ -23,23 +21,20 @@ pub fn create_overlay(app: &AppHandle) -> tauri::Result<WebviewWindow> {
     let x = (screen_width - overlay_width) / 2.0;
     let y = 0.0;
 
-    let overlay = WebviewWindowBuilder::new(
-        app,
-        "overlay",
-        WebviewUrl::App("overlay/index.html".into()),
-    )
-    .title("Steadi Overlay")
-    .transparent(true)
-    .decorations(false)
-    .always_on_top(true)
-    .shadow(false)
-    .skip_taskbar(true)
-    .resizable(false)
-    .visible(true)
-    .content_protected(true)
-    .inner_size(overlay_width, overlay_height)
-    .position(x, y)
-    .build()?;
+    let overlay =
+        WebviewWindowBuilder::new(app, "overlay", WebviewUrl::App("overlay/index.html".into()))
+            .title("Steadi Overlay")
+            .transparent(true)
+            .decorations(false)
+            .always_on_top(true)
+            .shadow(false)
+            .skip_taskbar(true)
+            .resizable(false)
+            .visible(true)
+            .content_protected(true)
+            .inner_size(overlay_width, overlay_height)
+            .position(x, y)
+            .build()?;
 
     #[cfg(target_os = "macos")]
     apply_bottom_rounded_corners(&overlay);
@@ -74,8 +69,8 @@ fn apply_bottom_rounded_corners(overlay: &WebviewWindow) {
                 if let Some(layer) = content_view.layer() {
                     layer.setCornerRadius(16.0);
                     // CALayer coords: MinY = bottom of layer on screen
-                    let bottom_corners = CACornerMask::LayerMinXMinYCorner
-                        | CACornerMask::LayerMaxXMinYCorner;
+                    let bottom_corners =
+                        CACornerMask::LayerMinXMinYCorner | CACornerMask::LayerMaxXMinYCorner;
                     layer.setMaskedCorners(bottom_corners);
                     layer.setMasksToBounds(true);
                 }
