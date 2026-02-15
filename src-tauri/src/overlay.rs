@@ -1,18 +1,17 @@
-// ABOUTME: Creates and manages the invisible glassmorphic overlay window with
-// ABOUTME: platform-specific screen capture exclusion and vibrancy effects.
+// ABOUTME: Creates and manages the invisible overlay window with platform-specific
+// ABOUTME: screen capture exclusion. Dark notch-blending design, no vibrancy effects.
 
 use tauri::webview::WebviewWindowBuilder;
-use tauri::window::{Color, Effect, EffectState, EffectsBuilder};
 use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindow};
 
-/// Creates the overlay window with invisibility and vibrancy settings.
+/// Creates the overlay window with screen capture exclusion.
 ///
 /// The overlay is:
-/// - Transparent with native vibrancy (frosted glass via OS compositor)
+/// - Transparent window with solid dark background via CSS (blends with MacBook notch)
 /// - Always on top of other windows
 /// - Protected from screen capture (content_protected)
-/// - Positioned at top-center of screen (notch-style)
-/// - Borderless with rounded corners via vibrancy radius
+/// - Positioned at top-center of screen, flush with top edge
+/// - Bottom-only rounded corners via CSS (top flush with screen edge)
 pub fn create_overlay(app: &AppHandle) -> tauri::Result<WebviewWindow> {
     let monitor = app
         .primary_monitor()?
@@ -21,17 +20,9 @@ pub fn create_overlay(app: &AppHandle) -> tauri::Result<WebviewWindow> {
     let scale = monitor.scale_factor();
     let screen_width = monitor.size().width as f64 / scale;
     let overlay_width = screen_width * 0.55;
-    let overlay_height = 160.0;
+    let overlay_height = 200.0;
     let x = (screen_width - overlay_width) / 2.0;
     let y = 0.0;
-
-    let effects = EffectsBuilder::new()
-        .effect(Effect::HudWindow) // macOS: dark translucent HUD material
-        .effect(Effect::Acrylic) // Windows: acrylic blur effect
-        .state(EffectState::Active) // Stay active even when unfocused
-        .radius(10.0) // Rounded corners
-        .color(Color(0, 0, 0, 200)) // Dark smoke tint
-        .build();
 
     let overlay = WebviewWindowBuilder::new(
         app,
@@ -49,7 +40,6 @@ pub fn create_overlay(app: &AppHandle) -> tauri::Result<WebviewWindow> {
     .content_protected(true)
     .inner_size(overlay_width, overlay_height)
     .position(x, y)
-    .effects(effects)
     .build()?;
 
     Ok(overlay)
