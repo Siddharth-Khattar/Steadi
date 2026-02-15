@@ -12,7 +12,7 @@
  */
 export default function OverlayApp() {
   return (
-    <div className="w-full h-full flex flex-col rounded-b-2xl overflow-hidden bg-black/95">
+    <div className="w-full h-full flex flex-col rounded-2xl overflow-hidden bg-black/95">
       {/* Teleprompter text content */}
       <div className="flex-1 flex items-start justify-center px-5 py-3 overflow-hidden">
         <div className="max-w-[90%] text-center">
