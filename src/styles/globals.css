@@ -9,3 +9,9 @@ body {
   user-select: none;
   -webkit-user-select: none;
 }
+
+.cm-editor,
+.cm-editor * {
+  user-select: text;
+  -webkit-user-select: text;
+}
