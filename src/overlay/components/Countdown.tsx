@@ -18,7 +18,9 @@ export function Countdown() {
 
   useEffect(() => {
     if (countdownValue <= 0) return;
-    const timer = setTimeout(() => decrementCountdown(), 1000);
+    const timer = setTimeout(() => {
+      decrementCountdown();
+    }, 1000);
     return () => clearTimeout(timer);
   }, [countdownValue, decrementCountdown]);
 
