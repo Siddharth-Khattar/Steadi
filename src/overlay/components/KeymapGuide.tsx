@@ -26,8 +26,8 @@ const GLOBAL_SHORTCUTS: ShortcutEntry[] = [
 const LOCAL_SHORTCUTS: ShortcutEntry[] = [
   { keys: "Space", description: "Toggle play / pause" },
   { keys: "Esc", description: "Stop & close script" },
-  { keys: "[  /  ]", description: "Decrease / increase font" },
-  { keys: "-  /  =", description: "Decrease / increase opacity" },
+  { keys: `${MOD}+-  /  ${MOD}++`, description: "Decrease / increase font" },
+  { keys: "-  /  +", description: "Decrease / increase opacity" },
   { keys: "?", description: "Toggle this guide" },
 ];
 

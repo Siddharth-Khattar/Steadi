@@ -25,10 +25,10 @@ interface UseOverlayControlsReturn {
  * Local keys:
  *   Space        -> toggle play/pause
  *   Escape       -> stop teleprompter (reset + clear script)
- *   BracketLeft  -> decrease font size
- *   BracketRight -> increase font size
+ *   Cmd/Ctrl + - -> decrease font size
+ *   Cmd/Ctrl + + -> increase font size
  *   Minus        -> decrease opacity
- *   Equal        -> increase opacity
+ *   Equal/+      -> increase opacity
  *   ?            -> toggle keyboard shortcut guide
  *
  * Hover-to-pause: mouseenter on content area pauses scrolling; mouseleave
@@ -112,6 +112,28 @@ export function useOverlayControls({
       }
 
       const store = useTeleprompterStore.getState();
+      const hasModifier = e.metaKey || e.ctrlKey;
+
+      // Layout-aware font size (Cmd/Ctrl + key) and opacity (plain key) controls.
+      // Uses e.key instead of e.code so it works across keyboard layouts (e.g. German).
+      if (e.key === "-") {
+        e.preventDefault();
+        if (hasModifier) {
+          store.decreaseFontSize();
+        } else {
+          store.decreaseOpacity();
+        }
+        return;
+      }
+      if (e.key === "+" || e.key === "=") {
+        e.preventDefault();
+        if (hasModifier) {
+          store.increaseFontSize();
+        } else {
+          store.increaseOpacity();
+        }
+        return;
+      }
 
       switch (e.code) {
         case "Space":
@@ -122,22 +144,6 @@ export function useOverlayControls({
           e.preventDefault();
           store.resetTeleprompter();
           store.setScriptContent("");
-          break;
-        case "BracketLeft":
-          e.preventDefault();
-          store.decreaseFontSize();
-          break;
-        case "BracketRight":
-          e.preventDefault();
-          store.increaseFontSize();
-          break;
-        case "Minus":
-          e.preventDefault();
-          store.decreaseOpacity();
-          break;
-        case "Equal":
-          e.preventDefault();
-          store.increaseOpacity();
           break;
       }
     }
