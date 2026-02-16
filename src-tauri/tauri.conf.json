@@ -18,6 +18,8 @@
         "url": "main/index.html",
         "width": 1200,
         "height": 800,
+        "minWidth": 680,
+        "minHeight": 400,
         "center": true,
         "resizable": true,
         "decorations": true

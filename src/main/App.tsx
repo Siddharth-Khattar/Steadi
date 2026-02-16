@@ -2,12 +2,7 @@
 // ABOUTME: Composes sidebar, editor, and markdown preview via react-resizable-panels.
 
 import { useEffect } from "react";
-import {
-  Group,
-  Panel,
-  Separator,
-  useDefaultLayout,
-} from "react-resizable-panels";
+import { Group, Panel, Separator } from "react-resizable-panels";
 import { useScriptStore } from "../stores/scriptStore";
 import { useUIStore } from "../stores/uiStore";
 import { TopBar } from "../components/toolbar/TopBar";
@@ -25,24 +20,13 @@ import { MarkdownPreview } from "../components/preview/MarkdownPreview";
  *   |---------------------------------|
  *
  * Sidebar and preview panels are conditionally rendered based on UI
- * store visibility flags. Panel sizes persist across sessions via
- * useDefaultLayout with localStorage.
+ * store visibility flags. Panels use their own defaultSize/minSize
+ * values; the library handles dynamic add/remove automatically via IDs.
  */
 export default function MainApp() {
   const isLoading = useScriptStore((s) => s.isLoading);
   const sidebarVisible = useUIStore((s) => s.sidebarVisible);
   const previewVisible = useUIStore((s) => s.previewVisible);
-
-  // Build the list of panel IDs based on current visibility
-  const panelIds: string[] = [];
-  if (sidebarVisible) panelIds.push("sidebar");
-  panelIds.push("editor");
-  if (previewVisible) panelIds.push("preview");
-
-  const { defaultLayout, onLayoutChanged } = useDefaultLayout({
-    id: "main-layout",
-    panelIds,
-  });
 
   useEffect(() => {
     useScriptStore.getState().initialize();
@@ -61,20 +45,18 @@ export default function MainApp() {
       <TopBar />
 
       <Group
-        id="main-layout"
         orientation="horizontal"
-        defaultLayout={defaultLayout}
-        onLayoutChanged={onLayoutChanged}
         className="flex-1 overflow-hidden"
       >
         {sidebarVisible && (
           <>
             <Panel
               id="sidebar"
-              defaultSize={25}
-              minSize={15}
-              maxSize={40}
+              defaultSize={20}
+              minSize={12}
+              maxSize={35}
               collapsible
+              className="min-w-45"
             >
               <Sidebar />
             </Panel>
@@ -89,7 +71,7 @@ export default function MainApp() {
         {previewVisible && (
           <>
             <Separator className="w-px bg-white/10 hover:bg-white/20 transition-colors" />
-            <Panel id="preview" defaultSize={50} minSize={20}>
+            <Panel id="preview" defaultSize={40} minSize={20}>
               <MarkdownPreview />
             </Panel>
           </>
