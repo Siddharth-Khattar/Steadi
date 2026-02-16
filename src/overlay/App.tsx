@@ -79,37 +79,42 @@ export default function OverlayApp() {
   useOverlayGeometry();
 
   return (
-    <div
-      className="w-full h-full flex flex-col overflow-hidden bg-black relative"
-      style={{ opacity }}
-    >
+    <div className="w-full h-full flex flex-col relative">
       {/* Invisible edge/corner resize zones and top drag strip */}
       <WindowControls />
 
-      {/* Reading line highlight guide */}
-      <div className="absolute left-0 right-0 top-[30%] h-[2em] bg-white/3 pointer-events-none z-10" />
+      {/* Main overlay with dark background — flex-1 fills available space */}
+      <div
+        className="flex-1 flex flex-col overflow-hidden bg-black relative min-h-0"
+        style={{ opacity }}
+      >
+        {/* Reading line highlight guide */}
+        <div className="absolute left-0 right-0 top-[30%] h-[2em] bg-white/3 pointer-events-none z-10" />
 
-      {/* Speed indicator toast */}
-      {speedIndicator && (
-        <div className="absolute top-4 right-4 bg-white/10 text-white/80 text-sm px-3 py-1 rounded-full z-40 pointer-events-none">
-          {speedIndicator}
-        </div>
-      )}
+        {/* Speed indicator toast */}
+        {speedIndicator && (
+          <div className="absolute top-4 right-4 bg-white/10 text-white/80 text-sm px-3 py-1 rounded-full z-40 pointer-events-none">
+            {speedIndicator}
+          </div>
+        )}
 
-      {scriptContent ? (
-        <>
-          <TeleprompterView containerRef={scrollContainerRef} />
-          <ProgressBar />
-          <ControlHints />
-          {showCountdown && <Countdown />}
-        </>
-      ) : (
-        <div className="flex-1 flex items-center justify-center">
-          <p className="text-white/30 text-lg">No script loaded</p>
-        </div>
-      )}
+        {scriptContent ? (
+          <>
+            <TeleprompterView containerRef={scrollContainerRef} />
+            <ProgressBar />
+            {showCountdown && <Countdown />}
+          </>
+        ) : (
+          <div className="flex-1 flex items-center justify-center">
+            <p className="text-white/30 text-lg">No script loaded</p>
+          </div>
+        )}
 
-      <KeymapGuide visible={showKeymapGuide} onDismiss={dismissKeymapGuide} />
+        <KeymapGuide visible={showKeymapGuide} onDismiss={dismissKeymapGuide} />
+      </div>
+
+      {/* Control hints below the overlay, in the transparent window area */}
+      {scriptContent && <ControlHints />}
     </div>
   );
 }
