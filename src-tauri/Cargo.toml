@@ -1,6 +1,6 @@
 [package]
 name = "steadi"
-version = "0.1.0"
+version = "0.0.1"
 description = "Cross-platform invisible teleprompter"
 authors = ["you"]
 edition = "2021"

@@ -1,9 +1,11 @@
-# ABOUTME: CI pipeline that validates every PR to main.
+# ABOUTME: CI pipeline that validates every push and PR to main.
 # ABOUTME: Runs frontend checks, Rust checks, and a full Tauri build.
 
 name: CI
 
 on:
+  push:
+    branches: [main]
   pull_request:
     branches: [main]
 
