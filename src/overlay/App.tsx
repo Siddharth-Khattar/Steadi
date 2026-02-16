@@ -5,9 +5,11 @@ import { useRef, useCallback } from "react";
 import { useTeleprompterStore, SPEED_VALUES } from "../stores/teleprompterStore";
 import { useAutoScroll } from "./hooks/useAutoScroll";
 import { useOverlayEvents } from "./hooks/useOverlayEvents";
+import { useOverlayGeometry } from "./hooks/useOverlayGeometry";
 import { TeleprompterView } from "./components/TeleprompterView";
 import { Countdown } from "./components/Countdown";
 import { ProgressBar } from "./components/ProgressBar";
+import { WindowControls } from "./components/WindowControls";
 
 /**
  * The overlay window is transparent (set in index.html). The dark background
@@ -58,11 +60,16 @@ export default function OverlayApp() {
     onScrollDown: handleScrollDown,
   });
 
+  useOverlayGeometry();
+
   return (
     <div
       className="w-full h-full flex flex-col overflow-hidden bg-black relative"
       style={{ opacity }}
     >
+      {/* Invisible edge/corner resize zones and top drag strip */}
+      <WindowControls />
+
       {/* Reading line highlight guide */}
       <div className="absolute left-0 right-0 top-[30%] h-[2em] bg-white/[0.03] pointer-events-none z-10" />
 
