@@ -20,7 +20,7 @@ const HINTS = [
 export function ControlHints() {
   return (
     <div className="flex justify-center px-4 py-1 pointer-events-none">
-      <div className="flex gap-4 bg-neutral-800/80 rounded-full px-4 py-1">
+      <div className="flex gap-4 bg-neutral-900 rounded-full px-4 py-1">
         {HINTS.map((hint) => (
           <span key={hint.key} className="text-white/90 text-[10px] font-mono whitespace-nowrap">
             <kbd className="text-white bg-white/15 px-1 py-0.5 rounded text-[10px]">
