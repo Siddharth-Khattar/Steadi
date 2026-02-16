@@ -69,7 +69,7 @@ Plans:
 
 Plans:
 - [x] 03-01-PLAN.md — Teleprompter store, Tauri event capabilities, and Rust global shortcuts
-- [ ] 03-02-PLAN.md — Overlay teleprompter UI with markdown rendering, countdown, scroll engine, and visual polish
+- [x] 03-02-PLAN.md — Overlay teleprompter UI with markdown rendering, countdown, scroll engine, and visual polish
 - [ ] 03-03-PLAN.md — Start button wiring, overlay drag/resize, and geometry persistence
 - [ ] 03-04-PLAN.md — Keyboard controls, hover-to-pause, rewind, and end-to-end verification
 
@@ -110,6 +110,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 |-------|----------------|--------|-----------|
 | 1. Platform Validation Spike | 3/3 | Complete (macOS validated, Windows deferred) | 2026-02-15 |
 | 2. Script Editor | 4/4 | Complete | 2026-02-16 |
-| 3. Overlay and Auto-Scroll | 1/4 | In progress | - |
+| 3. Overlay and Auto-Scroll | 2/4 | In progress | - |
 | 4. Voice Sync (macOS) | 0/2 | Not started | - |
 | 5. Voice Sync (Windows) | 0/2 | Not started | - |
