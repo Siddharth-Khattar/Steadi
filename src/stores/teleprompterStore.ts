@@ -15,7 +15,7 @@ export const SPEED_VALUES: Record<SpeedPreset, number> = {
 
 const SPEED_CYCLE: SpeedPreset[] = ["slow", "medium", "fast"];
 
-const FONT_SIZE_MIN = 6;
+const FONT_SIZE_MIN = 12;
 const FONT_SIZE_MAX = 64;
 const FONT_SIZE_STEP = 2;
 
@@ -60,7 +60,7 @@ export const useTeleprompterStore = create<TeleprompterStore>()(
   persist(
     (set, get) => ({
       // Persisted preferences
-      fontSize: 6,
+      fontSize: 16,
       opacity: 0.95,
       speedPreset: "medium" as SpeedPreset,
 
@@ -144,18 +144,17 @@ export const useTeleprompterStore = create<TeleprompterStore>()(
     {
       name: "teleprompter-store",
       storage: tauriJSONStorage,
-      version: 2,
+      version: 3,
       migrate(persistedState, version) {
         const state = persistedState as TeleprompterPreferences;
-        // v0 and v1 both had oversized font defaults (32, 24, 20, 16, 12).
-        // v1 migration existed but only caught v0→v1; subsequent default
-        // changes never re-ran because the persisted version was already 1.
-        if (version < 2) {
-          const STALE_FONT_DEFAULTS = [32, 24, 20, 16, 12];
+        // Migrate any persisted store from earlier versions to the current
+        // default fontSize. Only resets if the value matches a known stale default.
+        if (version < 3) {
+          const STALE_FONT_DEFAULTS = [32, 24, 20, 12, 6];
           return {
             ...state,
             fontSize: STALE_FONT_DEFAULTS.includes(state.fontSize)
-              ? 6
+              ? 16
               : state.fontSize,
           };
         }
