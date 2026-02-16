@@ -109,7 +109,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Platform Validation Spike | 3/3 | Complete (macOS validated, Windows deferred) | 2026-02-15 |
-| 2. Script Editor | 2/4 | In progress | - |
+| 2. Script Editor | 3/4 | In progress | - |
 | 3. Overlay and Auto-Scroll | 0/4 | Not started | - |
 | 4. Voice Sync (macOS) | 0/2 | Not started | - |
 | 5. Voice Sync (Windows) | 0/2 | Not started | - |

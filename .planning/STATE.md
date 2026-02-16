@@ -5,34 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-02-15)
 
 **Core value:** The teleprompter overlay must be completely invisible during screen sharing while scrolling in sync with the user's voice
-**Current focus:** Phase 2 in progress (Script Editor) — Plan 2 complete, 2 remaining
+**Current focus:** Phase 2 in progress (Script Editor) — Plan 3 complete, 1 remaining
 
 ## Current Position
 
 Phase: 2 of 5 (Script Editor) — IN PROGRESS
-Plan: 2 of 4 in Phase 2
+Plan: 3 of 4 in Phase 2
 Status: In progress
-Last activity: 2026-02-16 — Completed 02-02-PLAN.md (Editor Component)
+Last activity: 2026-02-16 — Completed 02-03-PLAN.md (Sidebar File Tree)
 
-Progress: [████......] 36%
+Progress: [█████.....] 47%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: 10 min
-- Total execution time: 0.85 hours
+- Total plans completed: 6
+- Average duration: 9 min
+- Total execution time: 0.9 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Platform Validation Spike | 3/3 | 45 min | 15 min |
-| 2. Script Editor | 2/4 | 6 min | 3 min |
+| 2. Script Editor | 3/4 | 9 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 13 min, 2 min, 30 min, 4 min, 2 min
-- Trend: improving (02-02 was 3 focused files, no new deps)
+- Last 5 plans: 2 min, 30 min, 4 min, 2 min, 3 min
+- Trend: stable fast (02-03 was 4 component files + 1 store update)
 
 *Updated after each plan completion*
 
@@ -62,6 +62,9 @@ Recent decisions affecting current work:
 - [02-01]: setActiveScript flushes pending content for previous script before switching
 - [02-02]: Extension type imported from @codemirror/state, not @codemirror/view
 - [02-02]: user-select override via inline style for reliable cross-webkit behavior
+- [02-03]: toggleFolderCollapse added to scriptStore (persisted via Folder type) rather than local component state
+- [02-03]: Context menus as simple fixed-position divs with click-outside/Escape listeners, no library
+- [02-03]: Multi-container DnD: each FolderItem owns a SortableContext, DndContext at Sidebar level
 
 ### Pending Todos
 
@@ -80,5 +83,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 02-02-PLAN.md (Editor Component)
+Stopped at: Completed 02-03-PLAN.md (Sidebar File Tree)
 Resume file: None
