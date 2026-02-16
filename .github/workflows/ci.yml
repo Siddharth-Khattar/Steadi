@@ -47,8 +47,8 @@ jobs:
       - run: cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings
       - run: cargo fmt --manifest-path src-tauri/Cargo.toml -- --check
 
-  build-check:
-    name: Build (full Tauri compile)
+  build-check-macos:
+    name: Build macOS (full Tauri compile)
     needs: [frontend-check, rust-check]
     runs-on: macos-latest
     steps:
@@ -68,4 +68,26 @@ jobs:
       - run: npm ci
       # tauri build runs beforeBuildCommand (npm run build) internally
       # --no-sign skips code signing (no Apple Developer credentials in CI)
+      - run: npx tauri build --no-sign
+
+  build-check-windows:
+    name: Build Windows (full Tauri compile)
+    needs: [frontend-check, rust-check]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+
+      - run: npm ci
+      # --no-sign skips code signing (no Windows signing certificate in CI)
       - run: npx tauri build --no-sign
