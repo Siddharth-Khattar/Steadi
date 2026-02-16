@@ -5,6 +5,9 @@ import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { GlassPanel } from "../components/ui/GlassPanel";
 
+const isMac = /Mac/.test(navigator.userAgent);
+const SHORTCUT_LABEL = isMac ? "Cmd+Shift+S" : "Ctrl+Shift+S";
+
 export default function MainApp() {
   const [overlayVisible, setOverlayVisible] = useState<boolean>(true);
 
@@ -29,7 +32,7 @@ export default function MainApp() {
           <p className="text-white/70 text-sm">
             Press{" "}
             <kbd className="px-2 py-0.5 rounded bg-white/10 text-white/90 text-xs font-mono">
-              Cmd+Shift+S
+              {SHORTCUT_LABEL}
             </kbd>{" "}
             to toggle overlay
           </p>
