@@ -8,9 +8,9 @@ import { tauriJSONStorage } from "../persistence/tauriStorage";
 type SpeedPreset = "slow" | "medium" | "fast";
 
 export const SPEED_VALUES: Record<SpeedPreset, number> = {
-  slow: 40,
-  medium: 70,
-  fast: 110,
+  slow: 30,
+  medium: 52,
+  fast: 82,
 };
 
 const SPEED_CYCLE: SpeedPreset[] = ["slow", "medium", "fast"];
@@ -60,7 +60,7 @@ export const useTeleprompterStore = create<TeleprompterStore>()(
   persist(
     (set, get) => ({
       // Persisted preferences
-      fontSize: 32,
+      fontSize: 24,
       opacity: 0.95,
       speedPreset: "medium" as SpeedPreset,
 
