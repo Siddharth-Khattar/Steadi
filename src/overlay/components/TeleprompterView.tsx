@@ -61,7 +61,7 @@ export function TeleprompterView({ containerRef }: TeleprompterViewProps) {
   return (
     <div
       ref={containerRef}
-      className="flex-1 overflow-y-auto px-8 py-6 teleprompter-fade teleprompter-scroll text-white/85"
+      className="flex-1 overflow-y-auto px-8 py-6 teleprompter-fade teleprompter-scroll text-white/75"
       style={{ fontSize: `${fontSize}px` }}
     >
       <ReactMarkdown
