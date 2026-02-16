@@ -3,6 +3,8 @@
   "description": "Minimal permissions for the teleprompter overlay",
   "windows": ["overlay"],
   "permissions": [
-    "core:default"
+    "core:default",
+    "core:event:default",
+    "store:default"
   ]
 }
