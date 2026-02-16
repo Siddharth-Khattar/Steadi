@@ -1,7 +1,7 @@
-// ABOUTME: Local keyboard controls, hover-to-pause, and speed indicator for the overlay window.
-// ABOUTME: Handles Space, Escape, brackets, minus/equal keys and mouseenter/mouseleave.
+// ABOUTME: Local keyboard controls, hover-to-pause, speed indicator, and keymap guide for the overlay.
+// ABOUTME: Handles Space, Escape, brackets, minus/equal, "?" keys and mouseenter/mouseleave.
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useTeleprompterStore } from "../../stores/teleprompterStore";
 
 interface UseOverlayControlsParams {
@@ -10,15 +10,17 @@ interface UseOverlayControlsParams {
 
 interface UseOverlayControlsReturn {
   speedIndicator: string | null;
+  showKeymapGuide: boolean;
+  dismissKeymapGuide: () => void;
 }
 
 /**
- * Provides local keyboard shortcuts, hover-to-pause behavior, and speed
- * indicator toast within the overlay window.
+ * Provides local keyboard shortcuts, hover-to-pause behavior, speed indicator
+ * toast, and keymap guide toggle within the overlay window.
  *
  * All store actions are accessed via getState() inside handlers so the effect
- * dependencies are empty — listeners are registered once on mount and never
- * torn down until unmount.
+ * dependencies are minimal — listeners are registered once (or only when the
+ * guide visibility changes) and never torn down otherwise.
  *
  * Local keys:
  *   Space        -> toggle play/pause
@@ -27,6 +29,7 @@ interface UseOverlayControlsReturn {
  *   BracketRight -> increase font size
  *   Minus        -> decrease opacity
  *   Equal        -> increase opacity
+ *   ?            -> toggle keyboard shortcut guide
  *
  * Hover-to-pause: mouseenter on content area pauses scrolling; mouseleave
  * resumes only if the pause was caused by hovering (not manual pause).
@@ -49,9 +52,65 @@ export function useOverlayControls({
   // Track whether this is the initial mount (skip indicator on first render)
   const isInitialMountRef = useRef(true);
 
+  // Keymap guide visibility state
+  const [showKeymapGuide, setShowKeymapGuide] = useState(false);
+  const keymapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Ref to read guide visibility inside handlers without adding it as
+  // a dependency that causes listener re-registration.
+  const showKeymapGuideRef = useRef(false);
+  useEffect(() => {
+    showKeymapGuideRef.current = showKeymapGuide;
+  });
+
+  const dismissKeymapGuide = useCallback(() => {
+    setShowKeymapGuide(false);
+    if (keymapTimerRef.current !== null) {
+      clearTimeout(keymapTimerRef.current);
+      keymapTimerRef.current = null;
+    }
+  }, []);
+
   // ---- Local keyboard shortcuts ----
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
+      // Check for "?" before the e.code switch — the "?" character is
+      // produced by different physical keys depending on the keyboard layout.
+      if (e.key === "?") {
+        e.preventDefault();
+        if (showKeymapGuideRef.current) {
+          // Currently showing → dismiss
+          setShowKeymapGuide(false);
+          if (keymapTimerRef.current !== null) {
+            clearTimeout(keymapTimerRef.current);
+            keymapTimerRef.current = null;
+          }
+        } else {
+          // Show guide with auto-dismiss after 6 seconds
+          setShowKeymapGuide(true);
+          // Clear any lingering timer from a previous rapid toggle
+          if (keymapTimerRef.current !== null) {
+            clearTimeout(keymapTimerRef.current);
+          }
+          keymapTimerRef.current = setTimeout(() => {
+            setShowKeymapGuide(false);
+            keymapTimerRef.current = null;
+          }, 6000);
+        }
+        return;
+      }
+
+      // If keymap guide is visible, any non-"?" key dismisses it
+      if (showKeymapGuideRef.current) {
+        setShowKeymapGuide(false);
+        if (keymapTimerRef.current !== null) {
+          clearTimeout(keymapTimerRef.current);
+          keymapTimerRef.current = null;
+        }
+        // Don't process the key further — just dismiss the guide
+        return;
+      }
+
       const store = useTeleprompterStore.getState();
 
       switch (e.code) {
@@ -142,5 +201,14 @@ export function useOverlayControls({
     };
   }, [speedPreset]);
 
-  return { speedIndicator };
+  // Cleanup auto-dismiss timer on unmount
+  useEffect(() => {
+    return () => {
+      if (keymapTimerRef.current !== null) {
+        clearTimeout(keymapTimerRef.current);
+      }
+    };
+  }, []);
+
+  return { speedIndicator, showKeymapGuide, dismissKeymapGuide };
 }

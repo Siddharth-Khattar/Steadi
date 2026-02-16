@@ -14,6 +14,7 @@ import { TeleprompterView } from "./components/TeleprompterView";
 import { Countdown } from "./components/Countdown";
 import { ProgressBar } from "./components/ProgressBar";
 import { WindowControls } from "./components/WindowControls";
+import { KeymapGuide } from "./components/KeymapGuide";
 
 /**
  * The overlay window is transparent (set in index.html). The dark background
@@ -69,9 +70,10 @@ export default function OverlayApp() {
     onScrollDown: handleScrollDown,
   });
 
-  const { speedIndicator } = useOverlayControls({
-    contentRef: scrollContainerRef,
-  });
+  const { speedIndicator, showKeymapGuide, dismissKeymapGuide } =
+    useOverlayControls({
+      contentRef: scrollContainerRef,
+    });
 
   useOverlayGeometry();
 
@@ -104,6 +106,8 @@ export default function OverlayApp() {
           <p className="text-white/30 text-lg">No script loaded</p>
         </div>
       )}
+
+      <KeymapGuide visible={showKeymapGuide} onDismiss={dismissKeymapGuide} />
     </div>
   );
 }
