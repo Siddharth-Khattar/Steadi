@@ -28,6 +28,8 @@ pub fn run() {
                 })
                 .build(),
         )
+        .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_store::Builder::default().build())
         .invoke_handler(tauri::generate_handler![
             commands::toggle_overlay,
             commands::create_overlay,
