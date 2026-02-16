@@ -2,6 +2,7 @@
 // ABOUTME: Supports expand/collapse, right-click context menu for rename/delete, and drag-and-drop reordering.
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { useDroppable } from "@dnd-kit/core";
 import {
   SortableContext,
   verticalListSortingStrategy,
@@ -9,6 +10,7 @@ import {
 import type { Folder, ScriptMeta } from "../../persistence/types";
 import { useScriptStore } from "../../stores/scriptStore";
 import { ScriptItem } from "./ScriptItem";
+import { ConfirmDialog } from "../shared/ConfirmDialog";
 
 interface FolderItemProps {
   folder: Folder;
@@ -19,24 +21,6 @@ interface FolderItemProps {
 interface ContextMenuPosition {
   x: number;
   y: number;
-}
-
-/** Strip markdown syntax for a clean preview snippet. */
-function stripMarkdown(text: string): string {
-  return text
-    .replace(/^#{1,6}\s+/gm, "") // headings
-    .replace(/\*\*(.+?)\*\*/g, "$1") // bold
-    .replace(/\*(.+?)\*/g, "$1") // italic
-    .replace(/__(.+?)__/g, "$1") // bold (underscore)
-    .replace(/_(.+?)_/g, "$1") // italic (underscore)
-    .replace(/~~(.+?)~~/g, "$1") // strikethrough
-    .replace(/`(.+?)`/g, "$1") // inline code
-    .replace(/\[(.+?)\]\(.+?\)/g, "$1") // links
-    .replace(/!\[.*?\]\(.+?\)/g, "") // images
-    .replace(/^[-*+]\s+/gm, "") // list markers
-    .replace(/^\d+\.\s+/gm, "") // ordered list markers
-    .replace(/^>\s+/gm, "") // blockquotes
-    .trim();
 }
 
 /**
@@ -51,6 +35,7 @@ export function FolderItem({
   const [contextMenu, setContextMenu] = useState<ContextMenuPosition | null>(
     null,
   );
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState(folder.name);
   const renameInputRef = useRef<HTMLInputElement>(null);
@@ -59,6 +44,13 @@ export function FolderItem({
   const toggleFolderCollapse = useScriptStore((s) => s.toggleFolderCollapse);
   const renameFolder = useScriptStore((s) => s.renameFolder);
   const deleteFolder = useScriptStore((s) => s.deleteFolder);
+  const createScript = useScriptStore((s) => s.createScript);
+
+  // Register the folder container as a droppable zone so scripts can be
+  // dragged into empty folders or onto the folder area itself.
+  const { setNodeRef: setDroppableRef, isOver } = useDroppable({
+    id: folder.id,
+  });
 
   const sortedScripts = [...scripts].sort((a, b) => a.order - b.order);
   const scriptIds = sortedScripts.map((s) => s.id);
@@ -135,16 +127,28 @@ export function FolderItem({
     }
   }
 
+  function handleNewScript() {
+    setContextMenu(null);
+    createScript(folder.id, "Untitled");
+  }
+
   function handleDelete() {
     setContextMenu(null);
-    if (
-      window.confirm(
-        `Delete folder "${folder.name}" and all its scripts?`,
-      )
-    ) {
-      deleteFolder(folder.id);
-    }
+    setShowDeleteConfirm(true);
   }
+
+  const confirmDelete = useCallback(async () => {
+    setShowDeleteConfirm(false);
+    try {
+      await deleteFolder(folder.id);
+    } catch (error) {
+      console.error(`Failed to delete folder "${folder.name}":`, error);
+    }
+  }, [deleteFolder, folder.id, folder.name]);
+
+  const cancelDelete = useCallback(() => {
+    setShowDeleteConfirm(false);
+  }, []);
 
   return (
     <div className="mb-1">
@@ -199,7 +203,12 @@ export function FolderItem({
 
       {/* Script list (shown when not collapsed) */}
       {!folder.isCollapsed && (
-        <div className="pl-2">
+        <div
+          ref={setDroppableRef}
+          className={`pl-2 min-h-[8px] rounded transition-colors ${
+            isOver ? "bg-white/5" : ""
+          }`}
+        >
           <SortableContext
             items={scriptIds}
             strategy={verticalListSortingStrategy}
@@ -209,7 +218,7 @@ export function FolderItem({
                 key={script.id}
                 id={script.id}
                 title={script.title}
-                preview={stripMarkdown(script.title).slice(0, 80) || "No content"}
+                preview={script.preview || "No content"}
                 isActive={activeScriptId === script.id}
               />
             ))}
@@ -232,6 +241,14 @@ export function FolderItem({
         >
           <button
             type="button"
+            onClick={handleNewScript}
+            className="w-full text-left px-3 py-1.5 text-xs text-white/80 hover:bg-white/10 transition-colors"
+          >
+            New Script
+          </button>
+          <div className="my-1 border-t border-white/10" />
+          <button
+            type="button"
             onClick={handleRename}
             className="w-full text-left px-3 py-1.5 text-xs text-white/80 hover:bg-white/10 transition-colors"
           >
@@ -246,9 +263,13 @@ export function FolderItem({
           </button>
         </div>
       )}
+
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        message={`Delete folder "${folder.name}" and all its scripts?`}
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+      />
     </div>
   );
 }
-
-// Re-export the stripMarkdown utility for use in the Sidebar parent
-export { stripMarkdown };

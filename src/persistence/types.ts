@@ -16,6 +16,8 @@ export interface Script {
 export interface ScriptMeta {
   id: string;
   title: string;
+  /** Short plain-text snippet from the body, derived on save. Optional for backward compat. */
+  preview?: string;
   folderId: string;
   order: number;
   createdAt: string;

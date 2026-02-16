@@ -1,10 +1,11 @@
-// ABOUTME: Individual script entry in the sidebar with title, preview, drag-and-drop support,
-// ABOUTME: and right-click context menu for rename and delete operations.
+// ABOUTME: Individual script entry in the sidebar with title, preview, drag handle,
+// ABOUTME: and right-click context menu for delete. Title is derived from editor content.
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useScriptStore } from "../../stores/scriptStore";
+import { ConfirmDialog } from "../shared/ConfirmDialog";
 
 interface ScriptItemProps {
   id: string;
@@ -20,16 +21,20 @@ interface ContextMenuPosition {
 
 /**
  * A single script entry in the sidebar file tree. Supports:
- * - Drag-and-drop reordering via @dnd-kit/sortable
+ * - Drag-and-drop reordering via a dedicated drag handle (grip icon)
  * - Click to select as active script
- * - Right-click context menu with Rename and Delete actions
- * - Inline title editing for rename
+ * - Right-click context menu with Delete action
+ *
+ * The drag handle pattern (setActivatorNodeRef + listeners on the grip only)
+ * ensures click and right-click events on the row body pass through normally
+ * without dnd-kit intercepting them.
  */
 export function ScriptItem({ id, title, preview, isActive }: ScriptItemProps) {
   const {
     attributes,
     listeners,
     setNodeRef,
+    setActivatorNodeRef,
     transform,
     transition,
     isDragging,
@@ -38,13 +43,10 @@ export function ScriptItem({ id, title, preview, isActive }: ScriptItemProps) {
   const [contextMenu, setContextMenu] = useState<ContextMenuPosition | null>(
     null,
   );
-  const [isRenaming, setIsRenaming] = useState(false);
-  const [renameValue, setRenameValue] = useState(title);
-  const renameInputRef = useRef<HTMLInputElement>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const contextMenuRef = useRef<HTMLDivElement>(null);
 
   const setActiveScript = useScriptStore((s) => s.setActiveScript);
-  const renameScript = useScriptStore((s) => s.renameScript);
   const deleteScript = useScriptStore((s) => s.deleteScript);
 
   const style = {
@@ -84,18 +86,8 @@ export function ScriptItem({ id, title, preview, isActive }: ScriptItemProps) {
     };
   }, [contextMenu, closeContextMenu]);
 
-  // Focus rename input when entering rename mode
-  useEffect(() => {
-    if (isRenaming && renameInputRef.current) {
-      renameInputRef.current.focus();
-      renameInputRef.current.select();
-    }
-  }, [isRenaming]);
-
   function handleClick() {
-    if (!isRenaming) {
-      setActiveScript(id);
-    }
+    setActiveScript(id);
   }
 
   function handleContextMenu(e: React.MouseEvent) {
@@ -103,34 +95,23 @@ export function ScriptItem({ id, title, preview, isActive }: ScriptItemProps) {
     setContextMenu({ x: e.clientX, y: e.clientY });
   }
 
-  function handleRename() {
-    setContextMenu(null);
-    setRenameValue(title);
-    setIsRenaming(true);
-  }
-
-  function commitRename() {
-    const trimmed = renameValue.trim();
-    if (trimmed && trimmed !== title) {
-      renameScript(id, trimmed);
-    }
-    setIsRenaming(false);
-  }
-
-  function handleRenameKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter") {
-      commitRename();
-    } else if (e.key === "Escape") {
-      setIsRenaming(false);
-    }
-  }
-
   function handleDelete() {
     setContextMenu(null);
-    if (window.confirm(`Delete "${title}"?`)) {
-      deleteScript(id);
-    }
+    setShowDeleteConfirm(true);
   }
+
+  const confirmDelete = useCallback(async () => {
+    setShowDeleteConfirm(false);
+    try {
+      await deleteScript(id);
+    } catch (error) {
+      console.error(`Failed to delete script "${title}":`, error);
+    }
+  }, [deleteScript, id, title]);
+
+  const cancelDelete = useCallback(() => {
+    setShowDeleteConfirm(false);
+  }, []);
 
   return (
     <>
@@ -138,30 +119,46 @@ export function ScriptItem({ id, title, preview, isActive }: ScriptItemProps) {
         ref={setNodeRef}
         style={style}
         {...attributes}
-        {...listeners}
         role="button"
         tabIndex={0}
         onClick={handleClick}
         onContextMenu={handleContextMenu}
-        className={`px-3 py-2 cursor-pointer rounded-md transition-colors ${
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleClick();
+          }
+        }}
+        className={`group relative pl-5 pr-3 py-2 cursor-pointer rounded-md transition-colors ${
           isActive ? "bg-white/10" : "hover:bg-white/5"
         }`}
       >
-        {isRenaming ? (
-          <input
-            ref={renameInputRef}
-            type="text"
-            value={renameValue}
-            onChange={(e) => setRenameValue(e.target.value)}
-            onBlur={commitRename}
-            onKeyDown={handleRenameKeyDown}
-            className="w-full bg-white/10 border border-white/20 rounded px-1 py-0.5 text-sm text-white/90 outline-none focus:border-white/40"
-          />
-        ) : (
-          <div className="text-sm text-white/90 font-medium truncate">
-            {title}
-          </div>
-        )}
+        {/* Drag handle — only this element receives dnd-kit listeners */}
+        <div
+          ref={setActivatorNodeRef}
+          {...listeners}
+          className="absolute left-1 top-1/2 -translate-y-1/2 p-0.5 opacity-0 group-hover:opacity-60 cursor-grab active:cursor-grabbing transition-opacity"
+          aria-label="Drag to reorder"
+        >
+          <svg
+            width="8"
+            height="14"
+            viewBox="0 0 8 14"
+            fill="currentColor"
+            className="text-white/50"
+          >
+            <circle cx="2" cy="2" r="1.5" />
+            <circle cx="6" cy="2" r="1.5" />
+            <circle cx="2" cy="7" r="1.5" />
+            <circle cx="6" cy="7" r="1.5" />
+            <circle cx="2" cy="12" r="1.5" />
+            <circle cx="6" cy="12" r="1.5" />
+          </svg>
+        </div>
+
+        <div className="text-sm text-white/90 font-medium truncate">
+          {title}
+        </div>
         <div className="text-xs text-white/40 truncate mt-0.5">{preview}</div>
       </div>
 
@@ -173,13 +170,6 @@ export function ScriptItem({ id, title, preview, isActive }: ScriptItemProps) {
         >
           <button
             type="button"
-            onClick={handleRename}
-            className="w-full text-left px-3 py-1.5 text-xs text-white/80 hover:bg-white/10 transition-colors"
-          >
-            Rename
-          </button>
-          <button
-            type="button"
             onClick={handleDelete}
             className="w-full text-left px-3 py-1.5 text-xs text-red-400/80 hover:bg-white/10 transition-colors"
           >
@@ -187,6 +177,13 @@ export function ScriptItem({ id, title, preview, isActive }: ScriptItemProps) {
           </button>
         </div>
       )}
+
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        message={`Delete "${title}"?`}
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+      />
     </>
   );
 }

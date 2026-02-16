@@ -1,11 +1,14 @@
 // ABOUTME: Root sidebar component providing drag-and-drop context and folder/script tree.
 // ABOUTME: Wraps all folders in a DndContext for cross-folder script drag-and-drop reordering.
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import {
   DndContext,
   closestCenter,
   DragOverlay,
+  PointerSensor,
+  useSensor,
+  useSensors,
   type DragStartEvent,
   type DragOverEvent,
   type DragEndEvent,
@@ -13,7 +16,7 @@ import {
 import { arrayMove } from "@dnd-kit/sortable";
 import { useScriptStore } from "../../stores/scriptStore";
 import { SidebarToolbar } from "./SidebarToolbar";
-import { FolderItem, stripMarkdown } from "./FolderItem";
+import { FolderItem } from "./FolderItem";
 import { ScriptItem } from "./ScriptItem";
 
 /**
@@ -33,7 +36,20 @@ export function Sidebar() {
 
   const [activeDragId, setActiveDragId] = useState<string | null>(null);
 
+  // Require 8px of pointer movement before initiating a drag, allowing
+  // click and right-click events to pass through to ScriptItem handlers.
+  const pointerSensor = useSensor(PointerSensor, {
+    activationConstraint: { distance: 8 },
+  });
+  const sensors = useSensors(pointerSensor);
+
   const sortedFolders = [...folders].sort((a, b) => a.order - b.order);
+
+  // Set of folder IDs for quick lookup when resolving drop targets
+  const folderIdSet = useMemo(
+    () => new Set(folders.map((f) => f.id)),
+    [folders],
+  );
 
   /** Get the folder that contains a given script. */
   const findFolderForScript = useCallback(
@@ -42,6 +58,19 @@ export function Sidebar() {
       return script ? script.folderId : null;
     },
     [scripts],
+  );
+
+  /**
+   * Resolve the target folder for a drop event. The `over.id` may be either:
+   * - A folder ID (from useDroppable on the folder container)
+   * - A script ID (from useSortable on a script item)
+   */
+  const resolveTargetFolder = useCallback(
+    (overId: string): string | null => {
+      if (folderIdSet.has(overId)) return overId;
+      return findFolderForScript(overId);
+    },
+    [folderIdSet, findFolderForScript],
   );
 
   /** Get sorted scripts for a folder. */
@@ -66,15 +95,15 @@ export function Sidebar() {
     const overId = over.id as string;
 
     const activeFolderId = findFolderForScript(activeId);
-    const overFolderId = findFolderForScript(overId);
+    const targetFolderId = resolveTargetFolder(overId);
 
-    // If the over target is a script in a different folder, move the active script
+    // Move script to a different folder when dragged over it
     if (
       activeFolderId &&
-      overFolderId &&
-      activeFolderId !== overFolderId
+      targetFolderId &&
+      activeFolderId !== targetFolderId
     ) {
-      moveScript(activeId, overFolderId);
+      moveScript(activeId, targetFolderId);
     }
   }
 
@@ -86,6 +115,10 @@ export function Sidebar() {
 
     const activeId = active.id as string;
     const overId = over.id as string;
+
+    // If dropped on a folder container, the cross-folder move was already
+    // handled in handleDragOver — nothing more to do.
+    if (folderIdSet.has(overId)) return;
 
     const activeFolderId = findFolderForScript(activeId);
     const overFolderId = findFolderForScript(overId);
@@ -115,6 +148,7 @@ export function Sidebar() {
       <SidebarToolbar />
 
       <DndContext
+        sensors={sensors}
         collisionDetection={closestCenter}
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
@@ -145,10 +179,7 @@ export function Sidebar() {
               <ScriptItem
                 id={draggedScript.id}
                 title={draggedScript.title}
-                preview={
-                  stripMarkdown(draggedScript.title).slice(0, 80) ||
-                  "No content"
-                }
+                preview={draggedScript.preview || "No content"}
                 isActive={false}
               />
             </div>

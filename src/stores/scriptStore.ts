@@ -11,6 +11,7 @@ import {
   deleteScriptFile,
 } from "../persistence/scriptFiles";
 import { tauriJSONStorage } from "../persistence/tauriStorage";
+import { extractMarkdownMeta } from "../persistence/markdownMeta";
 
 interface ScriptState {
   folders: Folder[];
@@ -81,21 +82,24 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
           (s) => s.folderId === folderId,
         );
 
+        const templateContent = `# ${title}\n\n`;
+
         const meta: ScriptMeta = {
           id,
           title,
+          preview: "",
           folderId,
           order: scriptsInFolder.length,
           createdAt: timestamp,
           updatedAt: timestamp,
         };
 
-        await saveScriptContent(id, "");
+        await saveScriptContent(id, templateContent);
 
         set({
           scripts: [...scripts, meta],
           activeScriptId: id,
-          activeContent: "",
+          activeContent: templateContent,
         });
       },
 
@@ -103,8 +107,13 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
         const { folders, scripts, activeScriptId } = get();
         const folderScripts = scripts.filter((s) => s.folderId === folderId);
 
-        for (const script of folderScripts) {
-          await deleteScriptFile(script.id);
+        try {
+          for (const script of folderScripts) {
+            await deleteScriptFile(script.id);
+          }
+        } catch (error) {
+          console.error(`Failed to delete scripts in folder ${folderId}:`, error);
+          throw error;
         }
 
         const folderScriptIds = new Set(folderScripts.map((s) => s.id));
@@ -127,7 +136,13 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
 
       deleteScript: async (scriptId: string) => {
         const { scripts, activeScriptId } = get();
-        await deleteScriptFile(scriptId);
+
+        try {
+          await deleteScriptFile(scriptId);
+        } catch (error) {
+          console.error(`Failed to delete script ${scriptId}:`, error);
+          throw error;
+        }
 
         const remainingScripts = scripts.filter((s) => s.id !== scriptId);
         const isActiveDeleted = activeScriptId === scriptId;
@@ -159,11 +174,19 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
       },
 
       setActiveScript: async (scriptId: string) => {
-        const { activeScriptId, activeContent } = get();
+        const { activeScriptId, activeContent, scripts } = get();
 
-        // Flush pending content for the previous script before switching
+        // Flush pending content and update metadata for the previous script before switching
         if (activeScriptId) {
           await saveScriptContent(activeScriptId, activeContent);
+          const { title, preview } = extractMarkdownMeta(activeContent);
+          set({
+            scripts: scripts.map((s) =>
+              s.id === activeScriptId
+                ? { ...s, title, preview, updatedAt: now() }
+                : s,
+            ),
+          });
         }
 
         const content = await loadScriptContent(scriptId);
@@ -180,9 +203,13 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
 
         await saveScriptContent(activeScriptId, activeContent);
 
+        const { title, preview } = extractMarkdownMeta(activeContent);
+
         set({
           scripts: scripts.map((s) =>
-            s.id === activeScriptId ? { ...s, updatedAt: now() } : s,
+            s.id === activeScriptId
+              ? { ...s, title, preview, updatedAt: now() }
+              : s,
           ),
         });
       },

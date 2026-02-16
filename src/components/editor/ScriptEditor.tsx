@@ -3,6 +3,7 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import CodeMirror from "@uiw/react-codemirror";
+import type { EditorView } from "@codemirror/view";
 import { useScriptStore } from "../../stores/scriptStore";
 import { steadiEditorTheme } from "./editorTheme";
 import { steadiExtensions } from "./editorExtensions";
@@ -23,6 +24,24 @@ export function ScriptEditor() {
   const saveActiveContent = useScriptStore((s) => s.saveActiveContent);
 
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  /**
+   * When a newly created script opens with "# Untitled", select just the
+   * heading text so the user can type to replace it immediately.
+   */
+  const handleCreateEditor = useCallback((view: EditorView) => {
+    const firstLine = view.state.doc.line(1);
+    const match = firstLine.text.match(/^#\s+(Untitled)$/);
+    if (match) {
+      // Select only the "Untitled" text, not the "# " prefix
+      const prefixLength = firstLine.text.indexOf(match[1]);
+      const from = firstLine.from + prefixLength;
+      const to = from + match[1].length;
+      view.dispatch({
+        selection: { anchor: from, head: to },
+      });
+    }
+  }, []);
 
   // Clear any pending save timeout on unmount
   useEffect(() => {
@@ -62,7 +81,7 @@ export function ScriptEditor() {
 
   return (
     <div
-      className="h-full [&_.cm-editor]:h-full"
+      className="h-full overflow-hidden [&_.cm-editor]:h-full"
       style={{ userSelect: "text", WebkitUserSelect: "text" }}
     >
       <CodeMirror
@@ -71,6 +90,8 @@ export function ScriptEditor() {
         onChange={handleChange}
         theme={steadiEditorTheme}
         extensions={steadiExtensions}
+        autoFocus
+        onCreateEditor={handleCreateEditor}
         basicSetup={{
           lineNumbers: false,
           foldGutter: false,
