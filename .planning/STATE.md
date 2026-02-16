@@ -5,33 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-02-15)
 
 **Core value:** The teleprompter overlay must be completely invisible during screen sharing while scrolling in sync with the user's voice
-**Current focus:** Phase 2 planned (Script Editor) — ready for execution
+**Current focus:** Phase 2 in progress (Script Editor) — Plan 1 complete, 3 remaining
 
 ## Current Position
 
-Phase: 2 of 5 (Script Editor) — PLANNED
-Plan: 0 of 4 in Phase 2 (planned, not yet executed)
-Status: Phase 2 planned, ready for execution
-Last activity: 2026-02-16 — Phase 2 planned: 4 plans in 3 waves
+Phase: 2 of 5 (Script Editor) — IN PROGRESS
+Plan: 1 of 4 in Phase 2
+Status: In progress
+Last activity: 2026-02-16 — Completed 02-01-PLAN.md (Foundation and Persistence)
 
-Progress: [██........] 20%
+Progress: [███.......] 29%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 15 min
-- Total execution time: 0.75 hours
+- Total plans completed: 4
+- Average duration: 12 min
+- Total execution time: 0.82 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Platform Validation Spike | 3/3 | 45 min | 15 min |
+| 2. Script Editor | 1/4 | 4 min | 4 min |
 
 **Recent Trend:**
-- Last 5 plans: 13 min, 2 min, 30 min
-- Trend: stable (plan 3 included human testing time)
+- Last 5 plans: 13 min, 2 min, 30 min, 4 min
+- Trend: improving (02-01 was dependency install + type definitions)
 
 *Updated after each plan completion*
 
@@ -55,6 +56,10 @@ Recent decisions affecting current work:
 - [Post-01]: **Native CALayer API for bottom-only rounded corners** — CSS border-radius can't affect the macOS window shape. Uses objc2-app-kit to set NSWindow contentView.layer.maskedCorners directly. Added objc2-app-kit, objc2-quartz-core, objc2-foundation as macOS-only deps.
 - [Post-01]: Overlay width reduced from 55% to 40% of screen width, height 140pt
 - [Post-01]: **Notch-blending deferred** — Placing overlay IN the menu bar area requires NSWindow.level = .statusBar or higher. macOS constrains regular windows below menu bar even at y=0. Needs dedicated research.
+- [02-01]: Tauri store plugin StoreOptions requires `defaults` field; pass empty object with autoSave: true
+- [02-01]: Script content persisted as individual .md files on filesystem; metadata via Tauri store JSON
+- [02-01]: Zustand partialize excludes activeContent and isLoading from persistence
+- [02-01]: setActiveScript flushes pending content for previous script before switching
 
 ### Pending Todos
 
@@ -73,5 +78,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Phase 2 planned — 4 plans in 3 waves, verified, ready for execution
+Stopped at: Completed 02-01-PLAN.md (Foundation and Persistence)
 Resume file: None
