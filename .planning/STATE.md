@@ -10,16 +10,16 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 3 of 5 (Overlay and Auto-Scroll)
-Plan: 2 of 4 in current phase
+Plan: 3 of 4 in current phase
 Status: In progress
-Last activity: 2026-02-16 — Completed 03-02-PLAN.md
+Last activity: 2026-02-16 — Completed 03-03-PLAN.md (start button, drag/resize, geometry persistence)
 
-Progress: [██████░░░░] 60%
+Progress: [███████░░░] 75%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: 7 min
 - Total execution time: ~1 hour
 
@@ -29,10 +29,10 @@ Progress: [██████░░░░] 60%
 |-------|-------|-------|----------|
 | 1. Platform Validation Spike | 3/3 | 45 min | 15 min |
 | 2. Script Editor | 4/4 | ~12 min | 3 min |
-| 3. Overlay and Auto-Scroll | 2/4 | 5 min | 3 min |
+| 3. Overlay and Auto-Scroll | 3/4 | 8 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 2 min, 3 min, 3 min, 2 min, 3 min
+- Last 5 plans: 3 min, 3 min, 2 min, 3 min, 3 min
 - Trend: stable fast
 
 *Updated after each plan completion*
@@ -78,6 +78,9 @@ Recent decisions affecting current work:
 - [03-02]: Countdown calls decrementCountdown (not setPlaying); store auto-transitions to isPlaying on count=0
 - [03-02]: Reading-line highlight is a static CSS band at 30% from top, not dynamic
 - [03-02]: Overlay-specific markdown components separate from MarkdownPreview for independent tuning
+- [03-03]: ResizeDirection type defined locally (not exported from @tauri-apps/api/window)
+- [03-03]: Overlay geometry stored in separate overlay-geometry.json store (not teleprompter-store)
+- [03-03]: 300ms debounce on geometry saves to avoid disk thrash during drag/resize
 
 ### Pending Todos
 
@@ -95,5 +98,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 03-02-PLAN.md (overlay teleprompter UI, scroll engine, countdown, progress bar)
+Stopped at: Completed 03-03-PLAN.md (start button, drag/resize, geometry persistence)
 Resume file: None
