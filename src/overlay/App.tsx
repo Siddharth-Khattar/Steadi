@@ -15,6 +15,7 @@ import { Countdown } from "./components/Countdown";
 import { ProgressBar } from "./components/ProgressBar";
 import { WindowControls } from "./components/WindowControls";
 import { KeymapGuide } from "./components/KeymapGuide";
+import { ControlHints } from "./components/ControlHints";
 
 /**
  * The overlay window is transparent (set in index.html). The dark background
@@ -99,6 +100,7 @@ export default function OverlayApp() {
         <>
           <TeleprompterView containerRef={scrollContainerRef} />
           <ProgressBar />
+          <ControlHints />
           {showCountdown && <Countdown />}
         </>
       ) : (
