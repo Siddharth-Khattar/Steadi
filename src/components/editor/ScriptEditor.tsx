@@ -1,0 +1,87 @@
+// ABOUTME: CodeMirror-based markdown editor with debounced auto-save for teleprompter scripts.
+// ABOUTME: Reads from and writes to the Zustand script store, handles script switching via key-based remount.
+
+import { useCallback, useEffect, useRef } from "react";
+import CodeMirror from "@uiw/react-codemirror";
+import { useScriptStore } from "../../stores/scriptStore";
+import { steadiEditorTheme } from "./editorTheme";
+import { steadiExtensions } from "./editorExtensions";
+
+const AUTO_SAVE_DELAY_MS = 1000;
+
+/**
+ * Distraction-free markdown editor wired to the script store.
+ *
+ * Uses key={activeScriptId} to force a clean remount on script switch,
+ * avoiding stale CodeMirror internal state. Content is auto-saved to
+ * disk after 1 second of inactivity via a debounced timeout.
+ */
+export function ScriptEditor() {
+  const activeScriptId = useScriptStore((s) => s.activeScriptId);
+  const activeContent = useScriptStore((s) => s.activeContent);
+  const setContent = useScriptStore((s) => s.setContent);
+  const saveActiveContent = useScriptStore((s) => s.saveActiveContent);
+
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clear any pending save timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleChange = useCallback(
+    (value: string) => {
+      // Update in-memory state immediately
+      setContent(value);
+
+      // Debounce the filesystem save
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+
+      saveTimeoutRef.current = setTimeout(() => {
+        saveActiveContent();
+      }, AUTO_SAVE_DELAY_MS);
+    },
+    [setContent, saveActiveContent],
+  );
+
+  if (!activeScriptId) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <p className="text-white/40 text-sm">
+          Select or create a script to start writing
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="h-full [&_.cm-editor]:h-full"
+      style={{ userSelect: "text", WebkitUserSelect: "text" }}
+    >
+      <CodeMirror
+        key={activeScriptId}
+        value={activeContent}
+        onChange={handleChange}
+        theme={steadiEditorTheme}
+        extensions={steadiExtensions}
+        basicSetup={{
+          lineNumbers: false,
+          foldGutter: false,
+          highlightActiveLine: true,
+          bracketMatching: false,
+          closeBrackets: false,
+          autocompletion: false,
+          highlightSelectionMatches: false,
+          searchKeymap: true,
+        }}
+      />
+    </div>
+  );
+}
