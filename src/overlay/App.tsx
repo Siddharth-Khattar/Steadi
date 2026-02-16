@@ -85,7 +85,7 @@ export default function OverlayApp() {
 
       {/* Main overlay with dark background — flex-1 fills available space */}
       <div
-        className="flex-1 flex flex-col overflow-hidden bg-black relative min-h-0"
+        className="flex-1 flex flex-col overflow-hidden bg-black relative min-h-0 rounded-b-2xl"
         style={{ opacity }}
       >
         {/* Reading line highlight guide */}
