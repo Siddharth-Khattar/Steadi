@@ -1,12 +1,15 @@
 // ABOUTME: Top toolbar with sidebar/preview toggles and teleprompter launch controls.
 // ABOUTME: Serves as the window title bar drag region for repositioning the main window.
 
+import { emitTo } from "@tauri-apps/api/event";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { useUIStore } from "../../stores/uiStore";
+import { useScriptStore } from "../../stores/scriptStore";
 
 /**
  * Top toolbar for the main editor window. Provides:
  * - Left: sidebar toggle button
- * - Right: preview toggle, Start Teleprompter (placeholder), Settings (placeholder)
+ * - Right: preview toggle, Start Teleprompter, Settings (placeholder)
  *
  * The entire bar acts as a Tauri drag region so users can reposition
  * the window by dragging the toolbar.
@@ -16,6 +19,28 @@ export function TopBar() {
   const previewVisible = useUIStore((s) => s.previewVisible);
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
   const togglePreview = useUIStore((s) => s.togglePreview);
+  const activeScriptId = useScriptStore((s) => s.activeScriptId);
+
+  /** Save the active script, send it to the overlay, start countdown, and minimize the editor. */
+  const startTeleprompter = async () => {
+    const { activeContent, activeScriptId: scriptId, saveActiveContent } =
+      useScriptStore.getState();
+
+    if (!activeContent || !scriptId) return;
+
+    try {
+      await saveActiveContent();
+      await emitTo("overlay", "teleprompter:load-script", {
+        content: activeContent,
+      });
+      await emitTo("overlay", "teleprompter:start-countdown", {});
+      await getCurrentWindow().minimize();
+    } catch (err) {
+      console.error("Failed to start teleprompter:", err);
+    }
+  };
+
+  const canStart = activeScriptId !== null;
 
   return (
     <div
@@ -80,11 +105,16 @@ export function TopBar() {
 
         <button
           type="button"
-          disabled
-          title="Coming in a future update"
-          className="px-2.5 py-1 rounded text-xs font-medium text-white/30 cursor-not-allowed"
+          disabled={!canStart}
+          onClick={startTeleprompter}
+          title={canStart ? "Start teleprompter" : "Open a script first"}
+          className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
+            canStart
+              ? "text-white/90 bg-white/10 hover:bg-white/15 cursor-pointer"
+              : "text-white/30 cursor-not-allowed"
+          }`}
         >
-          Start Teleprompter
+          Start
         </button>
 
         <button
