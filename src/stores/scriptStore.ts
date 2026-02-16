@@ -17,6 +17,7 @@ interface ScriptState {
   folders: Folder[];
   scripts: ScriptMeta[];
   activeScriptId: string | null;
+  activeFolderId: string | null;
   activeContent: string;
   isLoading: boolean;
 }
@@ -47,6 +48,7 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
       folders: [],
       scripts: [],
       activeScriptId: null,
+      activeFolderId: null,
       activeContent: "",
       isLoading: true,
 
@@ -70,7 +72,7 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
           order: folders.length,
           isCollapsed: false,
         };
-        set({ folders: [...folders, folder] });
+        set({ folders: [...folders, folder], activeFolderId: folder.id });
       },
 
       createScript: async (folderId: string, title: string) => {
@@ -99,6 +101,7 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
         set({
           scripts: [...scripts, meta],
           activeScriptId: id,
+          activeFolderId: folderId,
           activeContent: templateContent,
         });
       },
@@ -170,6 +173,7 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
           folders: folders.map((f) =>
             f.id === folderId ? { ...f, name } : f,
           ),
+          activeFolderId: folderId,
         });
       },
 
@@ -190,7 +194,12 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
         }
 
         const content = await loadScriptContent(scriptId);
-        set({ activeScriptId: scriptId, activeContent: content });
+        const script = get().scripts.find((s) => s.id === scriptId);
+        set({
+          activeScriptId: scriptId,
+          activeFolderId: script?.folderId ?? get().activeFolderId,
+          activeContent: content,
+        });
       },
 
       setContent: (content: string) => {
@@ -255,6 +264,7 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
           folders: folders.map((f) =>
             f.id === folderId ? { ...f, isCollapsed: !f.isCollapsed } : f,
           ),
+          activeFolderId: folderId,
         });
       },
     }),
@@ -265,6 +275,7 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
         folders: state.folders,
         scripts: state.scripts,
         activeScriptId: state.activeScriptId,
+        activeFolderId: state.activeFolderId,
       }),
     },
   ),

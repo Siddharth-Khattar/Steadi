@@ -9,6 +9,7 @@ import { useScriptStore } from "../../stores/scriptStore";
  */
 export function SidebarToolbar() {
   const folders = useScriptStore((s) => s.folders);
+  const activeFolderId = useScriptStore((s) => s.activeFolderId);
   const createFolder = useScriptStore((s) => s.createFolder);
   const createScript = useScriptStore((s) => s.createScript);
 
@@ -22,8 +23,11 @@ export function SidebarToolbar() {
       const updatedFolders = useScriptStore.getState().folders;
       const defaultFolder = updatedFolders[updatedFolders.length - 1];
       targetFolderId = defaultFolder.id;
+    } else if (activeFolderId && folders.some((f) => f.id === activeFolderId)) {
+      // Use the folder the user last interacted with.
+      targetFolderId = activeFolderId;
     } else {
-      // Use the first folder (by order) as the target.
+      // Fall back to the first folder (by order).
       const sorted = [...folders].sort((a, b) => a.order - b.order);
       targetFolderId = sorted[0].id;
     }

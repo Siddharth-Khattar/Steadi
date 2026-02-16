@@ -37,4 +37,5 @@ export interface AppMetadata {
   folders: Folder[];
   scripts: ScriptMeta[];
   activeScriptId: string | null;
+  activeFolderId: string | null;
 }
