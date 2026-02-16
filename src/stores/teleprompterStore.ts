@@ -60,7 +60,7 @@ export const useTeleprompterStore = create<TeleprompterStore>()(
   persist(
     (set, get) => ({
       // Persisted preferences
-      fontSize: 12,
+      fontSize: 6,
       opacity: 0.95,
       speedPreset: "medium" as SpeedPreset,
 
@@ -149,11 +149,11 @@ export const useTeleprompterStore = create<TeleprompterStore>()(
         const state = persistedState as TeleprompterPreferences;
         if (version === 0) {
           // Previous defaults (32, 24) were too large; reset to current default
-          const OLD_FONT_DEFAULTS = [32, 24, 20, 16];
+          const OLD_FONT_DEFAULTS = [32, 24, 20, 16, 12];
           return {
             ...state,
             fontSize: OLD_FONT_DEFAULTS.includes(state.fontSize)
-              ? 12
+              ? 6
               : state.fontSize,
           };
         }
