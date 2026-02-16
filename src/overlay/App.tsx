@@ -66,7 +66,15 @@ export default function OverlayApp() {
     setScrollPosition(Math.min(maxScroll, current + 80));
   }, [getScrollPosition, setScrollPosition]);
 
+  // Reset scroll position to the start when a new teleprompter session begins.
+  // This ensures re-starting the script (or starting after Escape) always
+  // scrolls from the top, not from the previous session's position.
+  const handleSessionStart = useCallback(() => {
+    setScrollPosition(0);
+  }, [setScrollPosition]);
+
   useOverlayEvents({
+    onSessionStart: handleSessionStart,
     onRewind: handleRewind,
     onScrollUp: handleScrollUp,
     onScrollDown: handleScrollDown,

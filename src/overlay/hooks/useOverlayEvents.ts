@@ -7,6 +7,7 @@ import { listen } from "@tauri-apps/api/event";
 import { useTeleprompterStore } from "../../stores/teleprompterStore";
 
 interface UseOverlayEventsParams {
+  onSessionStart: () => void;
   onRewind: () => void;
   onScrollUp: () => void;
   onScrollDown: () => void;
@@ -23,7 +24,7 @@ interface UseOverlayEventsParams {
  *
  * Registered events:
  * - teleprompter:load-script   -> store.setScriptContent
- * - teleprompter:start-countdown -> store.startCountdown
+ * - teleprompter:start-countdown -> store.startCountdown + onSessionStart
  * - teleprompter:toggle-play   -> store.togglePlay
  * - teleprompter:cycle-speed   -> store.cycleSpeed
  * - teleprompter:rewind        -> onRewind callback
@@ -31,17 +32,20 @@ interface UseOverlayEventsParams {
  * - teleprompter:scroll-down   -> onScrollDown callback
  */
 export function useOverlayEvents({
+  onSessionStart,
   onRewind,
   onScrollUp,
   onScrollDown,
 }: UseOverlayEventsParams): void {
   // Hold callback props in refs so the listener closures always call the
   // latest version without needing to re-register.
+  const onSessionStartRef = useRef(onSessionStart);
   const onRewindRef = useRef(onRewind);
   const onScrollUpRef = useRef(onScrollUp);
   const onScrollDownRef = useRef(onScrollDown);
 
   useEffect(() => {
+    onSessionStartRef.current = onSessionStart;
     onRewindRef.current = onRewind;
     onScrollUpRef.current = onScrollUp;
     onScrollDownRef.current = onScrollDown;
@@ -54,6 +58,7 @@ export function useOverlayEvents({
       }),
       listen("teleprompter:start-countdown", () => {
         useTeleprompterStore.getState().startCountdown();
+        onSessionStartRef.current();
       }),
       listen("teleprompter:toggle-play", () => {
         useTeleprompterStore.getState().togglePlay();

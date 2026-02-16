@@ -91,7 +91,12 @@ export const useTeleprompterStore = create<TeleprompterStore>()(
       },
 
       startCountdown: () => {
-        set({ showCountdown: true, countdownValue: 3 });
+        set({
+          showCountdown: true,
+          countdownValue: 3,
+          isPlaying: false,
+          scrollProgress: 0,
+        });
       },
 
       decrementCountdown: () => {
