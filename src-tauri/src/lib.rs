@@ -6,6 +6,16 @@ mod overlay;
 
 use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut, ShortcutState};
 
+/// Cmd+Shift+S on macOS, Ctrl+Shift+S on Windows/Linux.
+fn toggle_shortcut() -> Shortcut {
+    #[cfg(target_os = "macos")]
+    let modifiers = Modifiers::SUPER | Modifiers::SHIFT;
+    #[cfg(not(target_os = "macos"))]
+    let modifiers = Modifiers::CONTROL | Modifiers::SHIFT;
+
+    Shortcut::new(Some(modifiers), Code::KeyS)
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -23,13 +33,13 @@ pub fn run() {
             commands::create_overlay,
         ])
         .setup(|app| {
-            // Cmd+Shift+S on macOS, Ctrl+Shift+S on Windows
-            let toggle_shortcut =
-                Shortcut::new(Some(Modifiers::SUPER | Modifiers::SHIFT), Code::KeyS);
-            app.global_shortcut().register(toggle_shortcut)?;
+            if let Err(e) = app.global_shortcut().register(toggle_shortcut()) {
+                eprintln!("Failed to register global shortcut: {e}");
+            }
 
-            // Create overlay on startup
-            overlay::create_overlay(app.handle())?;
+            if let Err(e) = overlay::create_overlay(app.handle()) {
+                eprintln!("Failed to create overlay on startup: {e}");
+            }
 
             Ok(())
         })
