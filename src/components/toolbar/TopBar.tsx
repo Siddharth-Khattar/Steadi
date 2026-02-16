@@ -2,7 +2,7 @@
 // ABOUTME: Serves as the window title bar drag region for repositioning the main window.
 
 import { emitTo } from "@tauri-apps/api/event";
-import { getCurrentWindow } from "@tauri-apps/api/window";
+import { invoke } from "@tauri-apps/api/core";
 import { useUIStore } from "../../stores/uiStore";
 import { useScriptStore } from "../../stores/scriptStore";
 
@@ -21,7 +21,7 @@ export function TopBar() {
   const togglePreview = useUIStore((s) => s.togglePreview);
   const activeScriptId = useScriptStore((s) => s.activeScriptId);
 
-  /** Save the active script, send it to the overlay, start countdown, and minimize the editor. */
+  /** Save the active script, send it to the overlay, start countdown, and hide the editor (showing FAB). */
   const startTeleprompter = async () => {
     const { activeContent, activeScriptId: scriptId, saveActiveContent } =
       useScriptStore.getState();
@@ -34,7 +34,7 @@ export function TopBar() {
         content: activeContent,
       });
       await emitTo("overlay", "teleprompter:start-countdown", {});
-      await getCurrentWindow().minimize();
+      await invoke("start_teleprompter_session");
     } catch (err) {
       console.error("Failed to start teleprompter:", err);
     }

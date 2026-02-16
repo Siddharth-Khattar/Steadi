@@ -3,8 +3,9 @@
 
 import { useEffect } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { LogicalPosition, LogicalSize } from "@tauri-apps/api/dpi";
+import { LogicalSize } from "@tauri-apps/api/dpi";
 import { load } from "@tauri-apps/plugin-store";
+import { snapToMonitorTopCenter } from "../utils/snapToMonitorTopCenter";
 
 interface OverlayGeometry {
   x: number;
@@ -17,6 +18,9 @@ const STORE_PATH = "overlay-geometry.json";
 const STORE_KEY = "overlay-geometry";
 const DEBOUNCE_MS = 300;
 
+/** Delay after the last resize event before snapping to center. */
+const SNAP_AFTER_RESIZE_MS = 200;
+
 /**
  * Persists overlay window position and size to a Tauri store and restores
  * it on mount. Listens for onMoved / onResized events with debounced saving
@@ -26,6 +30,7 @@ export function useOverlayGeometry(): void {
   useEffect(() => {
     const window = getCurrentWindow();
     let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+    let snapTimer: ReturnType<typeof setTimeout> | null = null;
     let pendingGeometry: Partial<OverlayGeometry> = {};
     const unlistenFns: Array<() => void> = [];
 
@@ -62,10 +67,12 @@ export function useOverlayGeometry(): void {
       try {
         const store = await load(STORE_PATH, { autoSave: true, defaults: {} });
         const geo = await store.get<OverlayGeometry>(STORE_KEY);
-        if (!geo) return;
-
-        await window.setPosition(new LogicalPosition(geo.x, geo.y));
-        await window.setSize(new LogicalSize(geo.width, geo.height));
+        if (geo) {
+          // Restore saved size only — position is computed by snap
+          await window.setSize(new LogicalSize(geo.width, geo.height));
+        }
+        // Snap to top-center of the current (or primary) monitor
+        await snapToMonitorTopCenter();
       } catch (err) {
         console.error("Failed to restore overlay geometry:", err);
       }
@@ -85,6 +92,17 @@ export function useOverlayGeometry(): void {
         const scale = await window.scaleFactor();
         const logical = payload.toLogical(scale);
         debouncedSave({ width: logical.width, height: logical.height });
+
+        // Debounced snap: re-center the overlay after resizing settles.
+        // Each resize event resets the timer so the snap only fires once
+        // the user stops dragging.
+        if (snapTimer !== null) {
+          clearTimeout(snapTimer);
+        }
+        snapTimer = setTimeout(() => {
+          void snapToMonitorTopCenter();
+          snapTimer = null;
+        }, SNAP_AFTER_RESIZE_MS);
       });
       unlistenFns.push(unlistenResized);
     }
@@ -94,6 +112,9 @@ export function useOverlayGeometry(): void {
     return () => {
       if (debounceTimer !== null) {
         clearTimeout(debounceTimer);
+      }
+      if (snapTimer !== null) {
+        clearTimeout(snapTimer);
       }
       for (const unlisten of unlistenFns) {
         unlisten();

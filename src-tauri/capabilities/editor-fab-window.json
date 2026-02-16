@@ -1,0 +1,9 @@
+{
+  "identifier": "editor-fab-capability",
+  "description": "Minimal permissions for the editor floating action button",
+  "windows": ["editor-fab"],
+  "permissions": [
+    "core:default",
+    "core:event:default"
+  ]
+}

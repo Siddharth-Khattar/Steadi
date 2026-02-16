@@ -1,4 +1,4 @@
-// ABOUTME: Vite build configuration with multi-page support for main and overlay windows.
+// ABOUTME: Vite build configuration with multi-page support for main, overlay, and editor-fab windows.
 // ABOUTME: Uses rollupOptions.input to produce separate bundles for each Tauri window.
 
 import { defineConfig } from "vite";
@@ -37,6 +37,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, "src/main/index.html"),
         overlay: resolve(__dirname, "src/overlay/index.html"),
+        "editor-fab": resolve(__dirname, "src/editor-fab/index.html"),
       },
     },
   },

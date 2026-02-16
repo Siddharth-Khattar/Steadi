@@ -25,7 +25,6 @@
     },
     "store:default",
     "core:event:default",
-    "core:window:allow-minimize",
     "core:window:allow-set-focus"
   ]
 }

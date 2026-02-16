@@ -2,6 +2,7 @@
 // ABOUTME: Handles Space, Escape, brackets, minus/equal, "?" keys and mouseenter/mouseleave.
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import { invoke } from "@tauri-apps/api/core";
 import { useTeleprompterStore } from "../../stores/teleprompterStore";
 
 interface UseOverlayControlsParams {
@@ -144,6 +145,8 @@ export function useOverlayControls({
           e.preventDefault();
           store.resetTeleprompter();
           store.setScriptContent("");
+          // Restore the editor window and hide the FAB
+          void invoke("restore_editor");
           break;
       }
     }

@@ -2,6 +2,7 @@
 // ABOUTME: global shortcuts, and sets up Tauri command handlers.
 
 mod commands;
+mod editor_fab;
 mod overlay;
 
 use tauri::Emitter;
@@ -78,6 +79,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             commands::toggle_overlay,
             commands::create_overlay,
+            commands::start_teleprompter_session,
+            commands::restore_editor,
         ])
         .setup(|app| {
             // Register all global shortcuts individually
@@ -92,6 +95,10 @@ pub fn run() {
 
             if let Err(e) = overlay::create_overlay(app.handle()) {
                 eprintln!("Failed to create overlay on startup: {e}");
+            }
+
+            if let Err(e) = editor_fab::create_editor_fab(app.handle()) {
+                eprintln!("Failed to create editor FAB on startup: {e}");
             }
 
             Ok(())

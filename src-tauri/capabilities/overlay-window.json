@@ -6,12 +6,13 @@
     "core:default",
     "core:event:default",
     "store:default",
-    "core:window:allow-start-dragging",
-    "core:window:allow-start-resize-dragging",
     "core:window:allow-set-position",
     "core:window:allow-set-size",
     "core:window:allow-scale-factor",
     "core:window:allow-outer-position",
-    "core:window:allow-inner-size"
+    "core:window:allow-inner-size",
+    "core:window:allow-current-monitor",
+    "core:window:allow-primary-monitor",
+    "core:window:allow-available-monitors"
   ]
 }

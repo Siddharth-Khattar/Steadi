@@ -16,6 +16,7 @@ import { ProgressBar } from "./components/ProgressBar";
 import { WindowControls } from "./components/WindowControls";
 import { KeymapGuide } from "./components/KeymapGuide";
 import { ControlHints } from "./components/ControlHints";
+import { MonitorCycleButton } from "./components/MonitorCycleButton";
 
 /**
  * The overlay window is transparent (set in index.html). The dark background
@@ -80,8 +81,11 @@ export default function OverlayApp() {
 
   return (
     <div className="w-full h-full flex flex-col relative">
-      {/* Invisible edge/corner resize zones and top drag strip */}
+      {/* Invisible edge/corner resize zones */}
       <WindowControls />
+
+      {/* Cycle overlay to next monitor (hidden on single-monitor setups) */}
+      <MonitorCycleButton />
 
       {/* Main overlay with dark background — flex-1 fills available space */}
       <div
