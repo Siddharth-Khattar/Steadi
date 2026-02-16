@@ -5,22 +5,22 @@
 See: .planning/PROJECT.md (updated 2026-02-15)
 
 **Core value:** The teleprompter overlay must be completely invisible during screen sharing while scrolling in sync with the user's voice
-**Current focus:** Phase 2 complete (Script Editor) — Phase 3 not yet started
+**Current focus:** Phase 3 in progress (Overlay and Auto-Scroll)
 
 ## Current Position
 
-Phase: 2 of 5 (Script Editor) — COMPLETE
-Plan: 4 of 4 in Phase 2
-Status: Complete
-Last activity: 2026-02-16 — Completed Phase 2 (Script Editor) with post-phase polish
+Phase: 3 of 5 (Overlay and Auto-Scroll)
+Plan: 1 of 4 in current phase
+Status: In progress
+Last activity: 2026-02-16 — Completed 03-01-PLAN.md
 
-Progress: [██████....] 55%
+Progress: [█████░░░░░] 53%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
-- Average duration: 9 min
+- Total plans completed: 8
+- Average duration: 8 min
 - Total execution time: ~1 hour
 
 **By Phase:**
@@ -29,9 +29,10 @@ Progress: [██████....] 55%
 |-------|-------|-------|----------|
 | 1. Platform Validation Spike | 3/3 | 45 min | 15 min |
 | 2. Script Editor | 4/4 | ~12 min | 3 min |
+| 3. Overlay and Auto-Scroll | 1/4 | 2 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 30 min, 4 min, 2 min, 3 min, 3 min
+- Last 5 plans: 4 min, 2 min, 3 min, 3 min, 2 min
 - Trend: stable fast
 
 *Updated after each plan completion*
@@ -71,6 +72,9 @@ Recent decisions affecting current work:
 - [Post-02]: activeFolderId tracks last-interacted folder for toolbar script creation target
 - [Post-02]: ConfirmDialog shared component replaces window.confirm for delete confirmations
 - [Post-02]: App icons replaced with Steadi branding (all platforms)
+- [03-01]: emit_to lives on Emitter trait in Tauri 2.10, not Manager
+- [03-01]: Platform modifiers extracted to shared helper; non-critical shortcuts use .ok() on register
+- [03-01]: teleprompterStore partialize persists only fontSize/opacity/speedPreset, not runtime state
 
 ### Pending Todos
 
@@ -88,5 +92,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Phase 2 complete with post-phase polish (activeFolderId, ConfirmDialog, app icons)
+Stopped at: Completed 03-01-PLAN.md (teleprompter store, capabilities, global shortcuts)
 Resume file: None
