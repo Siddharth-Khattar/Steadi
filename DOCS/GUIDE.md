@@ -137,9 +137,11 @@ Releases are triggered by pushing a `v*` tag. The workflow builds for macOS (App
    | macOS (Intel) | `Steadi_*_x64.dmg` |
    | Windows | `Steadi_*_x64-setup.exe` |
 
-   A `checksums-sha256.txt` file is generated and attached automatically.
+   Installers are passed between jobs via Actions artifacts (not `gh release download`) for reliability. A `checksums-sha256.txt` file is generated and attached automatically.
 
-6. **Review the draft release** on the [Releases page](https://github.com/Siddharth-Khattar/Steadi/releases). Edit the notes if needed, then click **Publish release**.
+6. **Wait for ALL jobs to finish** before publishing. The draft release must have all assets attached. Then click **Publish release** (ensure "Set as pre-release" is **unchecked** for stable releases).
+
+   > **Do not manually create releases** — `tauri-action` creates the draft. Manually creating a second release for the same tag causes `gh release download` to resolve to the wrong one.
 
 7. **Homebrew tap auto-updates.** When you publish a non-prerelease, the `update-homebrew` workflow downloads both macOS DMGs, computes SHA-256 hashes, renders `.github/cask-template.rb` with the new values, and pushes the updated cask to the [`homebrew-steadi`](https://github.com/Siddharth-Khattar/homebrew-steadi) repo. Pre-releases (RC/alpha/beta) are skipped automatically.
 
