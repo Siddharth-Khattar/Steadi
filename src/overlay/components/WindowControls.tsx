@@ -1,10 +1,10 @@
-// ABOUTME: Invisible edge/corner zones for overlay resize-dragging and a top drag strip.
-// ABOUTME: Uses Tauri startResizeDragging API with direction-specific cursors for intuitive window manipulation.
+// ABOUTME: Invisible edge/corner zones for overlay resize and a top drag strip.
+// ABOUTME: Uses custom center-anchored symmetric resize via pointer tracking and Tauri window APIs.
 
-import type { MouseEventHandler } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import { LogicalPosition, LogicalSize } from "@tauri-apps/api/dpi";
 
-/** Tauri resize direction strings matching the internal ResizeDirection type. */
+/** Resize direction label for mapping drag axes. */
 type ResizeDirection =
   | "East"
   | "West"
@@ -15,11 +15,113 @@ type ResizeDirection =
   | "SouthEast"
   | "SouthWest";
 
+/** Which logical axes a resize direction affects. */
+interface ResizeAxes {
+  /** -1 = West (drag-left grows), 0 = none, 1 = East (drag-right grows) */
+  horizontal: -1 | 0 | 1;
+  /** -1 = North (drag-up grows), 0 = none, 1 = South (drag-down grows) */
+  vertical: -1 | 0 | 1;
+}
+
+const DIRECTION_AXES: Record<ResizeDirection, ResizeAxes> = {
+  East: { horizontal: 1, vertical: 0 },
+  West: { horizontal: -1, vertical: 0 },
+  North: { horizontal: 0, vertical: -1 },
+  South: { horizontal: 0, vertical: 1 },
+  NorthEast: { horizontal: 1, vertical: -1 },
+  NorthWest: { horizontal: -1, vertical: -1 },
+  SouthEast: { horizontal: 1, vertical: 1 },
+  SouthWest: { horizontal: -1, vertical: 1 },
+};
+
 /** Width/height of the invisible resize hit zones in pixels. */
 const EDGE_SIZE = 6;
 
 /** Height of the top drag strip in pixels. */
 const DRAG_STRIP_HEIGHT = 20;
+
+/** Minimum logical window dimensions during resize. */
+const MIN_WIDTH = 200;
+const MIN_HEIGHT = 100;
+
+/**
+ * Initiates a symmetric (center-anchored) resize operation. Instead of Tauri's
+ * native `startResizeDragging` which anchors the opposite edge, this tracks
+ * pointer movement and applies equal growth/shrink on both sides of the center.
+ *
+ * Uses `setPointerCapture` to continue receiving events even when the pointer
+ * moves outside the element during a fast drag.
+ */
+function startSymmetricResize(
+  e: React.PointerEvent,
+  direction: ResizeDirection,
+) {
+  e.preventDefault();
+  const el = e.currentTarget as HTMLElement;
+  const pointerId = e.pointerId;
+  el.setPointerCapture(pointerId);
+
+  const startScreenX = e.screenX;
+  const startScreenY = e.screenY;
+  const axes = DIRECTION_AXES[direction];
+  const appWindow = getCurrentWindow();
+
+  // Capture initial window state then attach move/up listeners
+  void (async () => {
+    const [physPos, physSize, scale] = await Promise.all([
+      appWindow.outerPosition(),
+      appWindow.innerSize(),
+      appWindow.scaleFactor(),
+    ]);
+
+    // Convert physical pixels → logical pixels (matches e.screenX/Y space)
+    const initW = physSize.width / scale;
+    const initH = physSize.height / scale;
+    const initX = physPos.x / scale;
+    const initY = physPos.y / scale;
+    const centerX = initX + initW / 2;
+    const centerY = initY + initH / 2;
+
+    function handleMove(moveEvent: PointerEvent) {
+      const dx = moveEvent.screenX - startScreenX;
+      const dy = moveEvent.screenY - startScreenY;
+
+      // Compute effective delta: direction sign ensures dragging "outward"
+      // from any edge increases the dimension.
+      const hDelta = axes.horizontal !== 0 ? dx * axes.horizontal : 0;
+      const vDelta = axes.vertical !== 0 ? dy * axes.vertical : 0;
+
+      // Symmetric: each pixel of outward drag adds 2px to the dimension
+      const newW = axes.horizontal !== 0
+        ? Math.max(MIN_WIDTH, initW + hDelta * 2)
+        : initW;
+      const newH = axes.vertical !== 0
+        ? Math.max(MIN_HEIGHT, initH + vDelta * 2)
+        : initH;
+
+      const newX = centerX - newW / 2;
+      const newY = centerY - newH / 2;
+
+      // Fire-and-forget for responsiveness — Tauri fires onMoved/onResized
+      // events which useOverlayGeometry picks up for persistence.
+      void appWindow.setSize(
+        new LogicalSize(Math.round(newW), Math.round(newH)),
+      );
+      void appWindow.setPosition(
+        new LogicalPosition(Math.round(newX), Math.round(newY)),
+      );
+    }
+
+    function handleUp() {
+      el.releasePointerCapture(pointerId);
+      el.removeEventListener("pointermove", handleMove);
+      el.removeEventListener("pointerup", handleUp);
+    }
+
+    el.addEventListener("pointermove", handleMove);
+    el.addEventListener("pointerup", handleUp);
+  })();
+}
 
 /**
  * Renders invisible resize handles along all edges and corners of the overlay
@@ -60,8 +162,8 @@ export function WindowControls() {
 }
 
 /**
- * An invisible absolutely-positioned zone that initiates a Tauri window
- * resize-drag in the given direction on mousedown.
+ * An invisible absolutely-positioned zone that initiates a symmetric
+ * center-anchored resize in the given direction on pointerdown.
  */
 function ResizeEdge({
   direction,
@@ -72,16 +174,11 @@ function ResizeEdge({
   className: string;
   style: React.CSSProperties;
 }) {
-  const onMouseDown: MouseEventHandler = (e) => {
-    e.preventDefault();
-    void getCurrentWindow().startResizeDragging(direction);
-  };
-
   return (
     <div
       className={`absolute pointer-events-auto ${className}`}
       style={style}
-      onMouseDown={onMouseDown}
+      onPointerDown={(e) => startSymmetricResize(e, direction)}
     />
   );
 }
