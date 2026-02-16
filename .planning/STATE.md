@@ -5,34 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-02-15)
 
 **Core value:** The teleprompter overlay must be completely invisible during screen sharing while scrolling in sync with the user's voice
-**Current focus:** Phase 2 in progress (Script Editor) — Plan 3 complete, 1 remaining
+**Current focus:** Phase 2 complete (Script Editor) — Phase 3 not yet started
 
 ## Current Position
 
-Phase: 2 of 5 (Script Editor) — IN PROGRESS
-Plan: 3 of 4 in Phase 2
-Status: In progress
-Last activity: 2026-02-16 — Completed 02-03-PLAN.md (Sidebar File Tree)
+Phase: 2 of 5 (Script Editor) — COMPLETE
+Plan: 4 of 4 in Phase 2
+Status: Complete
+Last activity: 2026-02-16 — Completed Phase 2 (Script Editor) with post-phase polish
 
-Progress: [█████.....] 47%
+Progress: [██████....] 55%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
+- Total plans completed: 7
 - Average duration: 9 min
-- Total execution time: 0.9 hours
+- Total execution time: ~1 hour
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Platform Validation Spike | 3/3 | 45 min | 15 min |
-| 2. Script Editor | 3/4 | 9 min | 3 min |
+| 2. Script Editor | 4/4 | ~12 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 2 min, 30 min, 4 min, 2 min, 3 min
-- Trend: stable fast (02-03 was 4 component files + 1 store update)
+- Last 5 plans: 30 min, 4 min, 2 min, 3 min, 3 min
+- Trend: stable fast
 
 *Updated after each plan completion*
 
@@ -65,10 +65,15 @@ Recent decisions affecting current work:
 - [02-03]: toggleFolderCollapse added to scriptStore (persisted via Folder type) rather than local component state
 - [02-03]: Context menus as simple fixed-position divs with click-outside/Escape listeners, no library
 - [02-03]: Multi-container DnD: each FolderItem owns a SortableContext, DndContext at Sidebar level
+- [02-04]: Sidebar decoupled from react-resizable-panels — rendered outside PanelGroup with fixed width and CSS transition
+- [02-04]: MarkdownPreview uses react-markdown components prop for styling (no @tailwindcss/typography)
+- [02-04]: TopBar uses data-tauri-drag-region for window dragging
+- [Post-02]: activeFolderId tracks last-interacted folder for toolbar script creation target
+- [Post-02]: ConfirmDialog shared component replaces window.confirm for delete confirmations
+- [Post-02]: App icons replaced with Steadi branding (all platforms)
 
 ### Pending Todos
 
-- Replace placeholder icons with proper Steadi branding icons
 - Windows invisibility testing when Windows dev environment is available
 - Windows overlay styling (no CALayer API — needs Windows-specific approach for rounded corners and solid background)
 - Investigate macOS 15+ ScreenCaptureKit bypass if specific apps found to capture overlay
@@ -83,5 +88,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 02-03-PLAN.md (Sidebar File Tree)
+Stopped at: Phase 2 complete with post-phase polish (activeFolderId, ConfirmDialog, app icons)
 Resume file: None

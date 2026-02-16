@@ -13,7 +13,7 @@ Steadi delivers a cross-platform invisible teleprompter in five phases, front-lo
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Platform Validation Spike** - Prove overlay invisibility works on macOS and Windows; establish Tauri multi-window app with dark overlay design
-- [ ] **Phase 2: Script Editor** - Notes-app-style markdown editor with file tree and local persistence
+- [x] **Phase 2: Script Editor** - Notes-app-style markdown editor with file tree and local persistence
 - [ ] **Phase 3: Overlay and Auto-Scroll** - Fully functional teleprompter overlay with controls, auto-scroll, and markdown rendering
 - [ ] **Phase 4: Voice Sync (macOS)** - Word-level speech tracking via SFSpeechRecognizer with auto-highlighting
 - [ ] **Phase 5: Voice Sync (Windows)** - Cadence-based scrolling via Silero VAD with ONNX Runtime
@@ -50,10 +50,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Install dependencies, register Tauri plugins, build persistence layer and Zustand stores
-- [ ] 02-02-PLAN.md — Create CodeMirror markdown editor with custom dark theme and auto-save
-- [ ] 02-03-PLAN.md — Build sidebar file tree with folders, scripts, CRUD, and drag-and-drop
-- [ ] 02-04-PLAN.md — Assemble three-panel layout with preview, top bar, and end-to-end verification
+- [x] 02-01-PLAN.md — Install dependencies, register Tauri plugins, build persistence layer and Zustand stores
+- [x] 02-02-PLAN.md — Create CodeMirror markdown editor with custom dark theme and auto-save
+- [x] 02-03-PLAN.md — Build sidebar file tree with folders, scripts, CRUD, and drag-and-drop
+- [x] 02-04-PLAN.md — Assemble three-panel layout with preview, top bar, and end-to-end verification
 
 ### Phase 3: Overlay and Auto-Scroll
 **Goal**: The overlay is a fully functional teleprompter with manual controls, auto-scroll, and markdown rendering that users can operate entirely via keyboard
@@ -109,7 +109,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Platform Validation Spike | 3/3 | Complete (macOS validated, Windows deferred) | 2026-02-15 |
-| 2. Script Editor | 3/4 | In progress | - |
+| 2. Script Editor | 4/4 | Complete | 2026-02-16 |
 | 3. Overlay and Auto-Scroll | 0/4 | Not started | - |
 | 4. Voice Sync (macOS) | 0/2 | Not started | - |
 | 5. Voice Sync (Windows) | 0/2 | Not started | - |
