@@ -33,6 +33,7 @@ interface ScriptActions {
   saveActiveContent: () => Promise<void>;
   reorderScripts: (folderId: string, scriptIds: string[]) => void;
   moveScript: (scriptId: string, targetFolderId: string) => void;
+  toggleFolderCollapse: (folderId: string) => void;
 }
 
 function now(): string {
@@ -217,6 +218,15 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
                   updatedAt: now(),
                 }
               : s,
+          ),
+        });
+      },
+
+      toggleFolderCollapse: (folderId: string) => {
+        const { folders } = get();
+        set({
+          folders: folders.map((f) =>
+            f.id === folderId ? { ...f, isCollapsed: !f.isCollapsed } : f,
           ),
         });
       },
