@@ -1,14 +1,11 @@
-// ABOUTME: Local keyboard controls and hover-to-pause logic for the overlay window.
-// ABOUTME: Handles Space, Escape, brackets, minus/equal keys and mouseenter/mouseleave on the scroll container.
+// ABOUTME: Local keyboard controls, hover-to-pause, and speed indicator for the overlay window.
+// ABOUTME: Handles Space, Escape, brackets, minus/equal keys and mouseenter/mouseleave.
 
 import { useEffect, useRef, useState } from "react";
 import { useTeleprompterStore } from "../../stores/teleprompterStore";
 
 interface UseOverlayControlsParams {
   contentRef: React.RefObject<HTMLDivElement | null>;
-  onRewind: () => void;
-  onScrollUp: () => void;
-  onScrollDown: () => void;
 }
 
 interface UseOverlayControlsReturn {
@@ -16,16 +13,20 @@ interface UseOverlayControlsReturn {
 }
 
 /**
- * Provides local keyboard shortcuts and hover-to-pause behavior within the
- * overlay window. Keyboard bindings are active when the overlay has focus.
+ * Provides local keyboard shortcuts, hover-to-pause behavior, and speed
+ * indicator toast within the overlay window.
+ *
+ * All store actions are accessed via getState() inside handlers so the effect
+ * dependencies are empty — listeners are registered once on mount and never
+ * torn down until unmount.
  *
  * Local keys:
- *   Space       -> toggle play/pause
- *   Escape      -> stop teleprompter (reset + clear script)
- *   BracketLeft -> decrease font size
- *   BracketRight-> increase font size
- *   Minus       -> decrease opacity
- *   Equal       -> increase opacity
+ *   Space        -> toggle play/pause
+ *   Escape       -> stop teleprompter (reset + clear script)
+ *   BracketLeft  -> decrease font size
+ *   BracketRight -> increase font size
+ *   Minus        -> decrease opacity
+ *   Equal        -> increase opacity
  *
  * Hover-to-pause: mouseenter on content area pauses scrolling; mouseleave
  * resumes only if the pause was caused by hovering (not manual pause).
@@ -35,18 +36,7 @@ interface UseOverlayControlsReturn {
  */
 export function useOverlayControls({
   contentRef,
-  onRewind,
-  onScrollUp,
-  onScrollDown,
 }: UseOverlayControlsParams): UseOverlayControlsReturn {
-  const togglePlay = useTeleprompterStore((s) => s.togglePlay);
-  const setPlaying = useTeleprompterStore((s) => s.setPlaying);
-  const resetTeleprompter = useTeleprompterStore((s) => s.resetTeleprompter);
-  const setScriptContent = useTeleprompterStore((s) => s.setScriptContent);
-  const increaseFontSize = useTeleprompterStore((s) => s.increaseFontSize);
-  const decreaseFontSize = useTeleprompterStore((s) => s.decreaseFontSize);
-  const increaseOpacity = useTeleprompterStore((s) => s.increaseOpacity);
-  const decreaseOpacity = useTeleprompterStore((s) => s.decreaseOpacity);
   const speedPreset = useTeleprompterStore((s) => s.speedPreset);
 
   // Hover-to-pause flag: true when scrolling was paused by a mouseenter event
@@ -62,49 +52,40 @@ export function useOverlayControls({
   // ---- Local keyboard shortcuts ----
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
+      const store = useTeleprompterStore.getState();
+
       switch (e.code) {
         case "Space":
           e.preventDefault();
-          togglePlay();
+          store.togglePlay();
           break;
         case "Escape":
           e.preventDefault();
-          resetTeleprompter();
-          setScriptContent("");
+          store.resetTeleprompter();
+          store.setScriptContent("");
           break;
         case "BracketLeft":
           e.preventDefault();
-          decreaseFontSize();
+          store.decreaseFontSize();
           break;
         case "BracketRight":
           e.preventDefault();
-          increaseFontSize();
+          store.increaseFontSize();
           break;
         case "Minus":
           e.preventDefault();
-          decreaseOpacity();
+          store.decreaseOpacity();
           break;
         case "Equal":
           e.preventDefault();
-          increaseOpacity();
+          store.increaseOpacity();
           break;
       }
     }
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [
-    togglePlay,
-    resetTeleprompter,
-    setScriptContent,
-    increaseFontSize,
-    decreaseFontSize,
-    increaseOpacity,
-    decreaseOpacity,
-    onRewind,
-    onScrollUp,
-    onScrollDown,
-  ]);
+  }, []);
 
   // ---- Hover-to-pause logic ----
   useEffect(() => {
@@ -112,17 +93,17 @@ export function useOverlayControls({
     if (!el) return;
 
     function handleMouseEnter() {
-      const isPlaying = useTeleprompterStore.getState().isPlaying;
+      const { isPlaying } = useTeleprompterStore.getState();
       if (isPlaying) {
         pausedByHoverRef.current = true;
-        setPlaying(false);
+        useTeleprompterStore.getState().setPlaying(false);
       }
     }
 
     function handleMouseLeave() {
       if (pausedByHoverRef.current) {
         pausedByHoverRef.current = false;
-        setPlaying(true);
+        useTeleprompterStore.getState().setPlaying(true);
       }
     }
 
@@ -133,7 +114,7 @@ export function useOverlayControls({
       el.removeEventListener("mouseenter", handleMouseEnter);
       el.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, [contentRef, setPlaying]);
+  }, [contentRef]);
 
   // ---- Speed indicator toast ----
   useEffect(() => {

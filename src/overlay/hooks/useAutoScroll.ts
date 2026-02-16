@@ -11,7 +11,6 @@ interface UseAutoScrollParams {
 }
 
 interface UseAutoScrollReturn {
-  scrollProgress: number;
   setScrollPosition: (pos: number) => void;
   getScrollPosition: () => number;
 }
@@ -109,7 +108,6 @@ export function useAutoScroll({
   }, [isPlaying, speedPxPerSec, containerRef, setScrollProgress]);
 
   return {
-    scrollProgress: progressRef.current,
     setScrollPosition,
     getScrollPosition,
   };

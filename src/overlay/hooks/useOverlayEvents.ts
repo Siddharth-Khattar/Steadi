@@ -1,8 +1,9 @@
 // ABOUTME: Tauri event listeners for inter-window communication in the overlay.
 // ABOUTME: Routes incoming events from main window and global shortcuts to teleprompter store actions.
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { listen } from "@tauri-apps/api/event";
+
 import { useTeleprompterStore } from "../../stores/teleprompterStore";
 
 interface UseOverlayEventsParams {
@@ -16,60 +17,63 @@ interface UseOverlayEventsParams {
  * shortcut handlers and routes them to the appropriate store actions
  * or callback functions.
  *
+ * Uses getState() for store actions and refs for callback props so that
+ * listeners are registered exactly once on mount and never torn down until
+ * unmount. This eliminates event-loss gaps caused by listener churn.
+ *
  * Registered events:
- * - teleprompter:load-script  -> store.setScriptContent
+ * - teleprompter:load-script   -> store.setScriptContent
  * - teleprompter:start-countdown -> store.startCountdown
- * - teleprompter:toggle-play  -> store.togglePlay
- * - teleprompter:cycle-speed  -> store.cycleSpeed
- * - teleprompter:rewind       -> onRewind callback
- * - teleprompter:scroll-up    -> onScrollUp callback
- * - teleprompter:scroll-down  -> onScrollDown callback
+ * - teleprompter:toggle-play   -> store.togglePlay
+ * - teleprompter:cycle-speed   -> store.cycleSpeed
+ * - teleprompter:rewind        -> onRewind callback
+ * - teleprompter:scroll-up     -> onScrollUp callback
+ * - teleprompter:scroll-down   -> onScrollDown callback
  */
 export function useOverlayEvents({
   onRewind,
   onScrollUp,
   onScrollDown,
 }: UseOverlayEventsParams): void {
-  const setScriptContent = useTeleprompterStore((s) => s.setScriptContent);
-  const startCountdown = useTeleprompterStore((s) => s.startCountdown);
-  const togglePlay = useTeleprompterStore((s) => s.togglePlay);
-  const cycleSpeed = useTeleprompterStore((s) => s.cycleSpeed);
+  // Hold callback props in refs so the listener closures always call the
+  // latest version without needing to re-register.
+  const onRewindRef = useRef(onRewind);
+  const onScrollUpRef = useRef(onScrollUp);
+  const onScrollDownRef = useRef(onScrollDown);
+
+  useEffect(() => {
+    onRewindRef.current = onRewind;
+    onScrollUpRef.current = onScrollUp;
+    onScrollDownRef.current = onScrollDown;
+  });
 
   useEffect(() => {
     const listeners = [
       listen<{ content: string }>("teleprompter:load-script", (event) => {
-        setScriptContent(event.payload.content);
+        useTeleprompterStore.getState().setScriptContent(event.payload.content);
       }),
       listen("teleprompter:start-countdown", () => {
-        startCountdown();
+        useTeleprompterStore.getState().startCountdown();
       }),
       listen("teleprompter:toggle-play", () => {
-        togglePlay();
+        useTeleprompterStore.getState().togglePlay();
       }),
       listen("teleprompter:cycle-speed", () => {
-        cycleSpeed();
+        useTeleprompterStore.getState().cycleSpeed();
       }),
       listen("teleprompter:rewind", () => {
-        onRewind();
+        onRewindRef.current();
       }),
       listen("teleprompter:scroll-up", () => {
-        onScrollUp();
+        onScrollUpRef.current();
       }),
       listen("teleprompter:scroll-down", () => {
-        onScrollDown();
+        onScrollDownRef.current();
       }),
     ];
 
     return () => {
       listeners.forEach((p) => p.then((fn) => fn()));
     };
-  }, [
-    setScriptContent,
-    startCountdown,
-    togglePlay,
-    cycleSpeed,
-    onRewind,
-    onScrollUp,
-    onScrollDown,
-  ]);
+  }, []);
 }
