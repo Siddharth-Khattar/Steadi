@@ -12,7 +12,9 @@ use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindow};
 /// - Protected from screen capture (content_protected)
 /// - Positioned at top-center of screen below menu bar
 pub fn create_overlay(app: &AppHandle) -> tauri::Result<WebviewWindow> {
-    let monitor = app.primary_monitor()?.expect("No primary monitor found");
+    let monitor = app
+        .primary_monitor()?
+        .ok_or_else(|| tauri::Error::Anyhow(anyhow::anyhow!("No primary monitor found")))?;
 
     let scale = monitor.scale_factor();
     let screen_width = monitor.size().width as f64 / scale;
