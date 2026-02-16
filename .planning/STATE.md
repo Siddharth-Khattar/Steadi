@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-15)
 
 **Core value:** The teleprompter overlay must be completely invisible during screen sharing while scrolling in sync with the user's voice
-**Current focus:** Phase 3 in progress (Overlay and Auto-Scroll)
+**Current focus:** Phase 3 complete — ready for Phase 4 (Voice Sync macOS)
 
 ## Current Position
 
-Phase: 3 of 5 (Overlay and Auto-Scroll)
-Plan: 3 of 4 in current phase
-Status: In progress
-Last activity: 2026-02-16 — Completed 03-03-PLAN.md (start button, drag/resize, geometry persistence)
+Phase: 3 of 5 (Overlay and Auto-Scroll) — COMPLETE
+Plan: 4 of 4 in current phase — COMPLETE
+Status: Phase 3 verified and complete
+Last activity: 2026-02-16 — Completed all Phase 3 plans including controls, click-to-toggle, editor FAB, and UX polish
 
-Progress: [███████░░░] 75%
+Progress: [██████████] 100% (Phase 3)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
-- Average duration: 7 min
-- Total execution time: ~1 hour
+- Total plans completed: 12
+- Average duration: ~5 min
+- Total execution time: ~1.5 hours
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [███████░░░] 75%
 |-------|-------|-------|----------|
 | 1. Platform Validation Spike | 3/3 | 45 min | 15 min |
 | 2. Script Editor | 4/4 | ~12 min | 3 min |
-| 3. Overlay and Auto-Scroll | 3/4 | 8 min | 3 min |
+| 3. Overlay and Auto-Scroll | 4/4 | ~20 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 3 min, 3 min, 2 min, 3 min, 3 min
-- Trend: stable fast
+- Plan 03-04 was iterative (multiple polish passes and fixes)
+- Earlier plans in phase averaged 3 min each
 
 *Updated after each plan completion*
 
@@ -81,6 +81,15 @@ Recent decisions affecting current work:
 - [03-03]: ResizeDirection type defined locally (not exported from @tauri-apps/api/window)
 - [03-03]: Overlay geometry stored in separate overlay-geometry.json store (not teleprompter-store)
 - [03-03]: 300ms debounce on geometry saves to avoid disk thrash during drag/resize
+- [03-04]: **Click-to-toggle replaces hover-to-pause** — hover conflicts with click (hovering to click pauses before click fires); click-to-toggle is more intentional
+- [03-04]: **Global shortcuts remapped** — overlay F, speed S, rewind R (mnemonic: Focus, Speed, Rewind)
+- [03-04]: **Editor FAB** — separate Tauri window shown when editor minimizes; provides "restore editor" access
+- [03-04]: **Multi-monitor cycling** — overlay can be moved between connected monitors via button
+- [03-04]: **Top-edge fade removed** — user prefers clean text presentation without fade effects
+- [03-04]: Font size controls use Cmd/Ctrl +/- (not brackets); opacity uses plain +/-
+- [03-04]: Persisted store defaults require version bump + migrate function to apply on existing installations
+- [03-04]: Default font size 16px after iterative tuning (was 32 → 12 → 6 → 16)
+- [03-04]: Native macOS resize disabled; custom WindowControls handles resize exclusively (prevents top-edge drag issues)
 
 ### Pending Todos
 
@@ -98,5 +107,6 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 03-03-PLAN.md (start button, drag/resize, geometry persistence)
+Stopped at: Phase 3 fully complete — all 4 plans executed and verified
 Resume file: None
+Next action: Begin Phase 4 planning (Voice Sync macOS)

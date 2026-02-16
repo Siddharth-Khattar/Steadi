@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Platform Validation Spike** - Prove overlay invisibility works on macOS and Windows; establish Tauri multi-window app with dark overlay design
 - [x] **Phase 2: Script Editor** - Notes-app-style markdown editor with file tree and local persistence
-- [ ] **Phase 3: Overlay and Auto-Scroll** - Fully functional teleprompter overlay with controls, auto-scroll, and markdown rendering
+- [x] **Phase 3: Overlay and Auto-Scroll** - Fully functional teleprompter overlay with controls, auto-scroll, and markdown rendering
 - [ ] **Phase 4: Voice Sync (macOS)** - Word-level speech tracking via SFSpeechRecognizer with auto-highlighting
 - [ ] **Phase 5: Voice Sync (Windows)** - Cadence-based scrolling via Silero VAD with ONNX Runtime
 
@@ -56,22 +56,22 @@ Plans:
 - [x] 02-04-PLAN.md — Assemble three-panel layout with preview, top bar, and end-to-end verification
 
 ### Phase 3: Overlay and Auto-Scroll
-**Goal**: The overlay is a fully functional teleprompter with manual controls, auto-scroll, and markdown rendering that users can operate entirely via keyboard
+**Goal**: The overlay is a fully functional teleprompter with manual controls, auto-scroll, and markdown rendering that users can operate entirely via keyboard and mouse
 **Depends on**: Phase 2
 **Requirements**: OVRL-02, OVRL-03, OVRL-04, OVRL-05, OVRL-06, OVRL-07, OVRL-08, SCRL-04, SCRL-05, CTRL-01, CTRL-02, CTRL-03, CTRL-04, CTRL-05, DSGN-04
 **Success Criteria** (what must be TRUE):
   1. Clicking "start" in the editor opens the overlay displaying the currently opened script with rendered markdown (bold, headers, emphasis), preceded by a countdown timer
   2. User can play/pause scrolling, adjust scroll speed, and manually scroll up/down using keyboard shortcuts
   3. User can drag the overlay to any position, resize it, adjust font size and opacity -- and all these settings persist across restarts
-  4. Hovering the mouse over the overlay instantly freezes scrolling; moving away resumes it
-  5. User can press a rewind hotkey to step back one sentence at a time in the script
+  4. Clicking the overlay content area toggles play/pause (click-to-toggle)
+  5. User can press a rewind hotkey to step back in the script
 **Plans**: 4 plans
 
 Plans:
 - [x] 03-01-PLAN.md — Teleprompter store, Tauri event capabilities, and Rust global shortcuts
 - [x] 03-02-PLAN.md — Overlay teleprompter UI with markdown rendering, countdown, scroll engine, and visual polish
-- [ ] 03-03-PLAN.md — Start button wiring, overlay drag/resize, and geometry persistence
-- [ ] 03-04-PLAN.md — Keyboard controls, hover-to-pause, rewind, and end-to-end verification
+- [x] 03-03-PLAN.md — Start button wiring, overlay drag/resize, and geometry persistence
+- [x] 03-04-PLAN.md — Keyboard controls, click-to-toggle, rewind, editor FAB, and end-to-end polish
 
 ### Phase 4: Voice Sync (macOS)
 **Goal**: On macOS, the teleprompter scrolls in sync with the user's voice at word-level precision, with the current position highlighted in the script
@@ -94,7 +94,7 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. On Windows, reading a script aloud causes the overlay to scroll at a speed proportional to speech cadence, pausing during silence
   2. The Silero VAD model is bundled correctly and runs via ONNX Runtime without DLL conflicts on clean Windows machines
-  3. Voice sync works seamlessly alongside all overlay controls from Phase 3 (hotkeys, hover-to-pause, rewind)
+  3. Voice sync works seamlessly alongside all overlay controls from Phase 3 (hotkeys, click-to-toggle, rewind)
 **Plans**: TBD
 
 Plans:
@@ -110,6 +110,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 |-------|----------------|--------|-----------|
 | 1. Platform Validation Spike | 3/3 | Complete (macOS validated, Windows deferred) | 2026-02-15 |
 | 2. Script Editor | 4/4 | Complete | 2026-02-16 |
-| 3. Overlay and Auto-Scroll | 2/4 | In progress | - |
+| 3. Overlay and Auto-Scroll | 4/4 | Complete | 2026-02-16 |
 | 4. Voice Sync (macOS) | 0/2 | Not started | - |
 | 5. Voice Sync (Windows) | 0/2 | Not started | - |

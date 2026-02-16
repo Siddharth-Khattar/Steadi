@@ -37,7 +37,7 @@ Transform the invisible overlay into a fully functional teleprompter with render
 ### Scroll & rewind feel
 - Smooth continuous scroll — constant upward motion like a film credit roll
 - Rewind (step back one sentence): smooth animated scroll back to previous sentence
-- Hover-to-pause: no visual indicator, scroll simply freezes when mouse enters overlay
+- Click-to-toggle: clicking overlay content toggles play/pause (replaced hover-to-pause — hover conflicts with click interactions)
 - End of script: scrolling stops silently at the last line, no extra messaging or auto-close
 
 ### Claude's Discretion

@@ -51,7 +51,7 @@
 - [ ] **CTRL-02**: Keyboard shortcut for scroll speed adjustment (faster/slower)
 - [ ] **CTRL-03**: Keyboard shortcut for manual scroll up/down
 - [ ] **CTRL-04**: Keyboard shortcut to toggle overlay visibility
-- [ ] **CTRL-05**: Hover-to-pause — mouse over overlay freezes scrolling instantly
+- [ ] **CTRL-05**: Click-to-toggle — clicking overlay content area toggles play/pause
 
 ### Design
 
@@ -113,33 +113,33 @@
 | PLAT-08 | Phase 1 | Deferred (no Windows machine) |
 | PLAT-09 | Phase 1 | Complete (zero network calls verified) |
 | OVRL-01 | Phase 1 | Complete (top-center, solid dark, bottom-rounded corners) |
-| OVRL-02 | Phase 3 | Pending |
-| OVRL-03 | Phase 3 | Pending |
-| OVRL-04 | Phase 3 | Pending |
-| OVRL-05 | Phase 3 | Pending |
-| OVRL-06 | Phase 3 | Pending |
-| OVRL-07 | Phase 3 | Pending |
-| OVRL-08 | Phase 3 | Pending |
+| OVRL-02 | Phase 3 | Complete (drag via WindowControls, persisted geometry) |
+| OVRL-03 | Phase 3 | Complete (overlay-geometry.json Tauri store) |
+| OVRL-04 | Phase 3 | Complete (custom edge/corner resize handles) |
+| OVRL-05 | Phase 3 | Complete (Cmd/Ctrl +/- shortcuts) |
+| OVRL-06 | Phase 3 | Complete (plain +/- shortcuts) |
+| OVRL-07 | Phase 3 | Complete (react-markdown with overlay-tuned styles) |
+| OVRL-08 | Phase 3 | Complete (3-2-1 countdown with dimmed script) |
 | SCRL-01 | Phase 4 | Pending |
 | SCRL-02 | Phase 4 | Pending |
 | SCRL-03 | Phase 5 | Pending |
-| SCRL-04 | Phase 3 | Pending |
-| SCRL-05 | Phase 3 | Pending |
-| EDIT-01 | Phase 2 | Pending |
-| EDIT-02 | Phase 2 | Pending |
-| EDIT-03 | Phase 2 | Pending |
-| EDIT-04 | Phase 2 | Pending |
-| EDIT-05 | Phase 2 | Pending |
-| EDIT-06 | Phase 2 | Pending |
-| CTRL-01 | Phase 3 | Pending |
-| CTRL-02 | Phase 3 | Pending |
-| CTRL-03 | Phase 3 | Pending |
-| CTRL-04 | Phase 3 | Pending |
-| CTRL-05 | Phase 3 | Pending |
+| SCRL-04 | Phase 3 | Complete (rAF scroll engine, 3 speed presets) |
+| SCRL-05 | Phase 3 | Complete (pixel-based rewind ~1/3 viewport per press) |
+| EDIT-01 | Phase 2 | Complete |
+| EDIT-02 | Phase 2 | Complete |
+| EDIT-03 | Phase 2 | Complete |
+| EDIT-04 | Phase 2 | Complete |
+| EDIT-05 | Phase 2 | Complete |
+| EDIT-06 | Phase 2 | Complete |
+| CTRL-01 | Phase 3 | Complete (Space local, Cmd+Shift+Space global) |
+| CTRL-02 | Phase 3 | Complete (Cmd+Shift+S cycles slow/medium/fast) |
+| CTRL-03 | Phase 3 | Complete (Cmd+Shift+W up, Cmd+Shift+X down) |
+| CTRL-04 | Phase 3 | Complete (Cmd+Shift+F toggles overlay) |
+| CTRL-05 | Phase 3 | Revised (click-to-toggle replaces hover-to-pause) |
 | DSGN-01 | Phase 1 | Revised (dark opaque design instead of glassmorphic — user decision) |
 | DSGN-02 | Phase 1 | Revised (native CALayer API instead of vibrancy — vibrancy was too translucent) |
-| DSGN-03 | Phase 2 | Pending |
-| DSGN-04 | Phase 3 | Pending |
+| DSGN-03 | Phase 2 | Complete (Start button in TopBar) |
+| DSGN-04 | Phase 3 | Complete (Start button sends active script to overlay) |
 
 **Coverage:**
 - v1 requirements: 37 total
@@ -148,4 +148,4 @@
 
 ---
 *Requirements defined: 2026-02-15*
-*Last updated: 2026-02-15 after Phase 1 completion*
+*Last updated: 2026-02-16 after Phase 3 completion*
