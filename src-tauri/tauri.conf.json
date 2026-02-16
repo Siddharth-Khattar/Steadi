@@ -16,8 +16,8 @@
         "label": "main",
         "title": "Steadi",
         "url": "main/index.html",
-        "width": 600,
-        "height": 400,
+        "width": 1200,
+        "height": 800,
         "center": true,
         "resizable": true,
         "decorations": true

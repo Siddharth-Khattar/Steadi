@@ -1,58 +1,100 @@
-// ABOUTME: Main application window. Provides app information and overlay
-// ABOUTME: controls for Phase 1 validation spike.
+// ABOUTME: Main application window with three-panel script editor layout.
+// ABOUTME: Composes sidebar, editor, and markdown preview via react-resizable-panels.
 
-import { useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
-import { GlassPanel } from "../components/ui/GlassPanel";
+import { useEffect } from "react";
+import {
+  Group,
+  Panel,
+  Separator,
+  useDefaultLayout,
+} from "react-resizable-panels";
+import { useScriptStore } from "../stores/scriptStore";
+import { useUIStore } from "../stores/uiStore";
+import { TopBar } from "../components/toolbar/TopBar";
+import { Sidebar } from "../components/sidebar/Sidebar";
+import { ScriptEditor } from "../components/editor/ScriptEditor";
+import { MarkdownPreview } from "../components/preview/MarkdownPreview";
 
-const isMac = /Mac/.test(navigator.userAgent);
-const SHORTCUT_LABEL = isMac ? "Cmd+Shift+S" : "Ctrl+Shift+S";
-
+/**
+ * Root component for the main editor window. Initializes the script
+ * persistence layer on mount and renders a three-panel layout:
+ *
+ *   TopBar (fixed height)
+ *   |---------------------------------|
+ *   | Sidebar | Editor | Preview      |
+ *   |---------------------------------|
+ *
+ * Sidebar and preview panels are conditionally rendered based on UI
+ * store visibility flags. Panel sizes persist across sessions via
+ * useDefaultLayout with localStorage.
+ */
 export default function MainApp() {
-  const [overlayVisible, setOverlayVisible] = useState<boolean>(true);
+  const isLoading = useScriptStore((s) => s.isLoading);
+  const sidebarVisible = useUIStore((s) => s.sidebarVisible);
+  const previewVisible = useUIStore((s) => s.previewVisible);
 
-  async function handleToggleOverlay() {
-    const newState = await invoke<boolean>("toggle_overlay");
-    setOverlayVisible(newState);
+  // Build the list of panel IDs based on current visibility
+  const panelIds: string[] = [];
+  if (sidebarVisible) panelIds.push("sidebar");
+  panelIds.push("editor");
+  if (previewVisible) panelIds.push("preview");
+
+  const { defaultLayout, onLayoutChanged } = useDefaultLayout({
+    id: "main-layout",
+    panelIds,
+  });
+
+  useEffect(() => {
+    useScriptStore.getState().initialize();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="h-screen w-screen bg-neutral-900 flex items-center justify-center">
+        <p className="text-white/40 text-sm">Loading...</p>
+      </div>
+    );
   }
 
   return (
-    <div className="w-full h-full bg-neutral-900 flex items-center justify-center p-8">
-      <GlassPanel className="max-w-md w-full p-8 flex flex-col items-center gap-6">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-white tracking-tight">
-            Steadi
-          </h1>
-          <p className="text-white/60 text-sm mt-1">Invisible Teleprompter</p>
-        </div>
+    <div className="h-screen w-screen bg-neutral-900 flex flex-col overflow-hidden">
+      <TopBar />
 
-        <div className="w-full h-px bg-white/10" />
+      <Group
+        id="main-layout"
+        orientation="horizontal"
+        defaultLayout={defaultLayout}
+        onLayoutChanged={onLayoutChanged}
+        className="flex-1 overflow-hidden"
+      >
+        {sidebarVisible && (
+          <>
+            <Panel
+              id="sidebar"
+              defaultSize={25}
+              minSize={15}
+              maxSize={40}
+              collapsible
+            >
+              <Sidebar />
+            </Panel>
+            <Separator className="w-px bg-white/10 hover:bg-white/20 transition-colors" />
+          </>
+        )}
 
-        <div className="text-center space-y-3">
-          <p className="text-white/70 text-sm">
-            Press{" "}
-            <kbd className="px-2 py-0.5 rounded bg-white/10 text-white/90 text-xs font-mono">
-              {SHORTCUT_LABEL}
-            </kbd>{" "}
-            to toggle overlay
-          </p>
+        <Panel id="editor" minSize={30}>
+          <ScriptEditor />
+        </Panel>
 
-          <button
-            type="button"
-            onClick={handleToggleOverlay}
-            className="px-5 py-2 rounded-lg bg-white/10 hover:bg-white/15 active:bg-white/20 text-white text-sm font-medium transition-colors cursor-pointer"
-          >
-            Toggle Overlay
-          </button>
-
-          <p className="text-white/40 text-xs">
-            Overlay:{" "}
-            <span className={overlayVisible ? "text-green-400/80" : "text-white/50"}>
-              {overlayVisible ? "visible" : "hidden"}
-            </span>
-          </p>
-        </div>
-      </GlassPanel>
+        {previewVisible && (
+          <>
+            <Separator className="w-px bg-white/10 hover:bg-white/20 transition-colors" />
+            <Panel id="preview" defaultSize={50} minSize={20}>
+              <MarkdownPreview />
+            </Panel>
+          </>
+        )}
+      </Group>
     </div>
   );
 }
