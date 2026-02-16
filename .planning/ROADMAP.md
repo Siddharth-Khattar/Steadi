@@ -65,13 +65,13 @@ Plans:
   3. User can drag the overlay to any position, resize it, adjust font size and opacity -- and all these settings persist across restarts
   4. Hovering the mouse over the overlay instantly freezes scrolling; moving away resumes it
   5. User can press a rewind hotkey to step back one sentence at a time in the script
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
-- [ ] 03-03: TBD
-- [ ] 03-04: TBD
+- [ ] 03-01-PLAN.md — Teleprompter store, Tauri event capabilities, and Rust global shortcuts
+- [ ] 03-02-PLAN.md — Overlay teleprompter UI with markdown rendering, countdown, scroll engine, and visual polish
+- [ ] 03-03-PLAN.md — Start button wiring, overlay drag/resize, and geometry persistence
+- [ ] 03-04-PLAN.md — Keyboard controls, hover-to-pause, rewind, and end-to-end verification
 
 ### Phase 4: Voice Sync (macOS)
 **Goal**: On macOS, the teleprompter scrolls in sync with the user's voice at word-level precision, with the current position highlighted in the script
