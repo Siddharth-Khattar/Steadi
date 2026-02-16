@@ -1,5 +1,5 @@
 // ABOUTME: Scrolling markdown container for the teleprompter overlay.
-// ABOUTME: Renders script content via react-markdown with overlay-optimized styles, top-edge fade, and hidden scrollbar.
+// ABOUTME: Renders script content via react-markdown with overlay-optimized styles and hidden scrollbar.
 
 import type { Components } from "react-markdown";
 import ReactMarkdown from "react-markdown";
@@ -8,6 +8,7 @@ import { useTeleprompterStore } from "../../stores/teleprompterStore";
 
 interface TeleprompterViewProps {
   containerRef: React.RefObject<HTMLDivElement | null>;
+  onClick?: () => void;
 }
 
 /**
@@ -37,12 +38,14 @@ const overlayMarkdownComponents: Components = {
     <em className="text-white/80 italic">{children}</em>
   ),
   ul: ({ children }) => (
-    <ul className="list-disc list-inside mb-4 space-y-1">{children}</ul>
+    <ul className="list-disc list-outside pl-6 mb-4 space-y-1">{children}</ul>
   ),
   ol: ({ children }) => (
-    <ol className="list-decimal list-inside mb-4 space-y-1">{children}</ol>
+    <ol className="list-decimal list-outside pl-6 mb-4 space-y-1">{children}</ol>
   ),
-  li: ({ children }) => <li>{children}</li>,
+  li: ({ children }) => (
+    <li className="mb-1 leading-relaxed">{children}</li>
+  ),
 };
 
 /**
@@ -51,18 +54,18 @@ const overlayMarkdownComponents: Components = {
  * the scroll engine to drive scrollTop directly.
  *
  * Visual effects:
- * - CSS mask-image fade at the top edge (via .teleprompter-fade class)
  * - Hidden scrollbar (via .teleprompter-scroll class)
  */
-export function TeleprompterView({ containerRef }: TeleprompterViewProps) {
+export function TeleprompterView({ containerRef, onClick }: TeleprompterViewProps) {
   const scriptContent = useTeleprompterStore((s) => s.scriptContent);
   const fontSize = useTeleprompterStore((s) => s.fontSize);
 
   return (
     <div
       ref={containerRef}
-      className="flex-1 overflow-y-auto px-8 py-6 teleprompter-fade teleprompter-scroll text-white/75"
+      className="flex-1 overflow-y-auto px-8 py-6 teleprompter-scroll text-white/75 cursor-pointer"
       style={{ fontSize: `${fontSize}px` }}
+      onClick={onClick}
     >
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}

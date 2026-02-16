@@ -18,9 +18,9 @@ fn platform_modifiers() -> Modifiers {
     modifiers
 }
 
-/// Cmd+Shift+S — Toggle overlay visibility.
+/// Cmd+Shift+F — Toggle overlay visibility.
 fn toggle_overlay_shortcut() -> Shortcut {
-    Shortcut::new(Some(platform_modifiers()), Code::KeyS)
+    Shortcut::new(Some(platform_modifiers()), Code::KeyF)
 }
 
 /// Cmd+Shift+Space — Play/pause teleprompter scrolling.
@@ -28,14 +28,14 @@ fn toggle_play_shortcut() -> Shortcut {
     Shortcut::new(Some(platform_modifiers()), Code::Space)
 }
 
-/// Cmd+Shift+D — Cycle speed preset (slow -> medium -> fast -> slow).
+/// Cmd+Shift+S — Cycle speed preset (slow -> medium -> fast -> slow).
 fn cycle_speed_shortcut() -> Shortcut {
-    Shortcut::new(Some(platform_modifiers()), Code::KeyD)
+    Shortcut::new(Some(platform_modifiers()), Code::KeyS)
 }
 
-/// Cmd+Shift+A — Rewind one sentence.
+/// Cmd+Shift+R — Rewind one sentence.
 fn rewind_shortcut() -> Shortcut {
-    Shortcut::new(Some(platform_modifiers()), Code::KeyA)
+    Shortcut::new(Some(platform_modifiers()), Code::KeyR)
 }
 
 /// Cmd+Shift+W — Manual scroll up.
@@ -43,7 +43,7 @@ fn scroll_up_shortcut() -> Shortcut {
     Shortcut::new(Some(platform_modifiers()), Code::KeyW)
 }
 
-/// Cmd+Shift+X — Manual scroll down (X is left-hand accessible, below S/D).
+/// Cmd+Shift+X — Manual scroll down (X is left-hand accessible, below W).
 fn scroll_down_shortcut() -> Shortcut {
     Shortcut::new(Some(platform_modifiers()), Code::KeyX)
 }

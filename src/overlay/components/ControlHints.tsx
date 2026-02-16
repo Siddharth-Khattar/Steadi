@@ -7,8 +7,8 @@ const MOD = isMac ? "Cmd" : "Ctrl";
 
 const HINTS = [
   { key: "Space", action: "play/pause" },
-  { key: `${MOD}+Shift+D`, action: "speed" },
-  { key: `${MOD}+Shift+A`, action: "rewind" },
+  { key: `${MOD}+Shift+S`, action: "speed" },
+  { key: `${MOD}+Shift+R`, action: "rewind" },
   { key: "?", action: "all shortcuts" },
 ];
 

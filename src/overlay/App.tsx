@@ -1,5 +1,5 @@
 // ABOUTME: Overlay window root hosting the teleprompter UI with markdown rendering and auto-scroll.
-// ABOUTME: Wires scroll engine, event listeners, keyboard controls, hover-to-pause, and visual polish.
+// ABOUTME: Wires scroll engine, event listeners, keyboard controls, click-to-toggle, and visual polish.
 
 import { useRef, useCallback } from "react";
 import {
@@ -80,10 +80,8 @@ export default function OverlayApp() {
     onScrollDown: handleScrollDown,
   });
 
-  const { speedIndicator, showKeymapGuide, dismissKeymapGuide } =
-    useOverlayControls({
-      contentRef: scrollContainerRef,
-    });
+  const { speedIndicator, showKeymapGuide, dismissKeymapGuide, handleContentClick } =
+    useOverlayControls();
 
   useOverlayGeometry();
 
@@ -112,7 +110,7 @@ export default function OverlayApp() {
 
         {scriptContent ? (
           <>
-            <TeleprompterView containerRef={scrollContainerRef} />
+            <TeleprompterView containerRef={scrollContainerRef} onClick={handleContentClick} />
             <ProgressBar />
             {showCountdown && <Countdown />}
           </>

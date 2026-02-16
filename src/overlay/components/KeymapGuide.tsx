@@ -17,8 +17,8 @@ const MOD = isMac ? "Cmd" : "Ctrl";
 
 const GLOBAL_SHORTCUTS: ShortcutEntry[] = [
   { keys: `${MOD}+Shift+Space`, description: "Toggle play / pause" },
-  { keys: `${MOD}+Shift+D`, description: "Cycle speed (slow / med / fast)" },
-  { keys: `${MOD}+Shift+A`, description: "Rewind ~1/3 screen" },
+  { keys: `${MOD}+Shift+S`, description: "Cycle speed (slow / med / fast)" },
+  { keys: `${MOD}+Shift+R`, description: "Rewind ~1/3 screen" },
   { keys: `${MOD}+Shift+Up`, description: "Scroll up" },
   { keys: `${MOD}+Shift+Down`, description: "Scroll down" },
 ];

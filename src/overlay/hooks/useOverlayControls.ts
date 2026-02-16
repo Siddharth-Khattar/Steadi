@@ -1,22 +1,19 @@
-// ABOUTME: Local keyboard controls, hover-to-pause, speed indicator, and keymap guide for the overlay.
-// ABOUTME: Handles Space, Escape, brackets, minus/equal, "?" keys and mouseenter/mouseleave.
+// ABOUTME: Local keyboard controls, click-to-toggle playback, speed indicator, and keymap guide for the overlay.
+// ABOUTME: Handles Space, Escape, minus/equal, "?" keys and click-to-toggle on the content area.
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { useTeleprompterStore } from "../../stores/teleprompterStore";
 
-interface UseOverlayControlsParams {
-  contentRef: React.RefObject<HTMLDivElement | null>;
-}
-
 interface UseOverlayControlsReturn {
   speedIndicator: string | null;
   showKeymapGuide: boolean;
   dismissKeymapGuide: () => void;
+  handleContentClick: () => void;
 }
 
 /**
- * Provides local keyboard shortcuts, hover-to-pause behavior, speed indicator
+ * Provides local keyboard shortcuts, click-to-toggle playback, speed indicator
  * toast, and keymap guide toggle within the overlay window.
  *
  * All store actions are accessed via getState() inside handlers so the effect
@@ -32,19 +29,13 @@ interface UseOverlayControlsReturn {
  *   Equal/+      -> increase opacity
  *   ?            -> toggle keyboard shortcut guide
  *
- * Hover-to-pause: mouseenter on content area pauses scrolling; mouseleave
- * resumes only if the pause was caused by hovering (not manual pause).
+ * Click-to-toggle: clicking the content area toggles play/pause (same as Space).
  *
  * Speed indicator: watches speedPreset changes and briefly shows the preset
  * name, clearing after 1.5 seconds.
  */
-export function useOverlayControls({
-  contentRef,
-}: UseOverlayControlsParams): UseOverlayControlsReturn {
+export function useOverlayControls(): UseOverlayControlsReturn {
   const speedPreset = useTeleprompterStore((s) => s.speedPreset);
-
-  // Hover-to-pause flag: true when scrolling was paused by a mouseenter event
-  const pausedByHoverRef = useRef(false);
 
   // Speed indicator toast state
   const [speedIndicator, setSpeedIndicator] = useState<string | null>(null);
@@ -155,34 +146,12 @@ export function useOverlayControls({
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // ---- Hover-to-pause logic ----
-  useEffect(() => {
-    const el = contentRef.current;
-    if (!el) return;
-
-    function handleMouseEnter() {
-      const { isPlaying } = useTeleprompterStore.getState();
-      if (isPlaying) {
-        pausedByHoverRef.current = true;
-        useTeleprompterStore.getState().setPlaying(false);
-      }
-    }
-
-    function handleMouseLeave() {
-      if (pausedByHoverRef.current) {
-        pausedByHoverRef.current = false;
-        useTeleprompterStore.getState().setPlaying(true);
-      }
-    }
-
-    el.addEventListener("mouseenter", handleMouseEnter);
-    el.addEventListener("mouseleave", handleMouseLeave);
-
-    return () => {
-      el.removeEventListener("mouseenter", handleMouseEnter);
-      el.removeEventListener("mouseleave", handleMouseLeave);
-    };
-  }, [contentRef]);
+  // Click-to-toggle: stable callback passed to TeleprompterView as an onClick prop.
+  // Using a React onClick prop (instead of a DOM listener via useEffect) avoids
+  // stale-ref issues when TeleprompterView is conditionally rendered.
+  const handleContentClick = useCallback(() => {
+    useTeleprompterStore.getState().togglePlay();
+  }, []);
 
   // ---- Speed indicator toast ----
   useEffect(() => {
@@ -219,5 +188,5 @@ export function useOverlayControls({
     };
   }, []);
 
-  return { speedIndicator, showKeymapGuide, dismissKeymapGuide };
+  return { speedIndicator, showKeymapGuide, dismissKeymapGuide, handleContentClick };
 }
