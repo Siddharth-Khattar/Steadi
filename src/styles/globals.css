@@ -15,3 +15,24 @@ body {
   user-select: text;
   -webkit-user-select: text;
 }
+
+/* Teleprompter top-edge fade */
+.teleprompter-fade {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 12%,
+    black 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 12%,
+    black 100%
+  );
+}
+
+/* Hide scrollbar in teleprompter */
+.teleprompter-scroll::-webkit-scrollbar {
+  display: none;
+}
