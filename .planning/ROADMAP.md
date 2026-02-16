@@ -47,12 +47,13 @@ Plans:
   3. Scripts persist locally -- closing and reopening the app shows the same scripts and folder structure
   4. Top-right area of the editor contains controls for launching the teleprompter and accessing settings
   5. The editor, sidebar, and all panels use glassmorphic design language consistent with Phase 1 design primitives
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
-- [ ] 02-03: TBD
+- [ ] 02-01-PLAN.md — Install dependencies, register Tauri plugins, build persistence layer and Zustand stores
+- [ ] 02-02-PLAN.md — Create CodeMirror markdown editor with custom dark theme and auto-save
+- [ ] 02-03-PLAN.md — Build sidebar file tree with folders, scripts, CRUD, and drag-and-drop
+- [ ] 02-04-PLAN.md — Assemble three-panel layout with preview, top bar, and end-to-end verification
 
 ### Phase 3: Overlay and Auto-Scroll
 **Goal**: The overlay is a fully functional teleprompter with manual controls, auto-scroll, and markdown rendering that users can operate entirely via keyboard
@@ -108,7 +109,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Platform Validation Spike | 3/3 | Complete (macOS validated, Windows deferred) | 2026-02-15 |
-| 2. Script Editor | 0/3 | Not started | - |
+| 2. Script Editor | 0/4 | Not started | - |
 | 3. Overlay and Auto-Scroll | 0/4 | Not started | - |
 | 4. Voice Sync (macOS) | 0/2 | Not started | - |
 | 5. Voice Sync (Windows) | 0/2 | Not started | - |
