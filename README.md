@@ -11,8 +11,12 @@
   <a href="https://github.com/Siddharth-Khattar/Steadi/releases/latest"><img src="https://img.shields.io/github/v/release/Siddharth-Khattar/Steadi?label=latest%20release&color=10b981" alt="Latest Release" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License" /></a>
   <a href="https://github.com/Siddharth-Khattar/Steadi/actions"><img src="https://img.shields.io/github/actions/workflow/status/Siddharth-Khattar/Steadi/ci.yml?label=CI" alt="CI Status" /></a>
-  <a href="https://img.shields.io/github/stars/Siddharth-Khattar/Steadi?style=social"><img src="https://img.shields.io/github/stars/Siddharth-Khattar/Steadi?style=social" alt="GitHub Stars" /></a>
-  <a href="https://ko-fi.com/siddharthkhattar"><img src="https://img.shields.io/badge/Support%20on%20Ko--fi-FF5E5B?logo=ko-fi&logoColor=white" alt="Ko-fi" /></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/Siddharth-Khattar/Steadi/stargazers"><img src="https://img.shields.io/github/stars/Siddharth-Khattar/Steadi?style=social&logo=github" alt="GitHub Stars" height="28" /></a>
+  &nbsp;&nbsp;
+  <a href="https://ko-fi.com/siddharthkhattar"><img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="Support on Ko-fi" height="32" /></a>
 </p>
 
 Steadi displays your script near the webcam in an **always-on-top overlay** that is completely invisible during screen sharing on Zoom, Teams, Meet, and OBS. Write in markdown, present with auto-scroll, and maintain natural eye contact, all without your audience ever seeing the prompter **or** needing to worry about any of your data leaving your machine.
