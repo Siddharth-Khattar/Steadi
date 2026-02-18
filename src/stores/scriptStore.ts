@@ -20,6 +20,8 @@ interface ScriptState {
   activeFolderId: string | null;
   activeContent: string;
   isLoading: boolean;
+  /** True once disk content has been loaded for the current active script. Prevents saving stale/empty content. */
+  contentReady: boolean;
 }
 
 interface ScriptActions {
@@ -51,16 +53,30 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
       activeFolderId: null,
       activeContent: "",
       isLoading: true,
+      contentReady: false,
 
       initialize: async () => {
         await initScriptsDir();
 
+        // Wait for Zustand persist to finish rehydrating metadata from disk.
+        // Without this, activeScriptId may still be null (the default) while
+        // the async tauriStorage read is in flight — causing us to skip
+        // content loading entirely.
+        if (!useScriptStore.persist.hasHydrated()) {
+          await new Promise<void>((resolve) => {
+            const unsub = useScriptStore.persist.onFinishHydration(() => {
+              unsub();
+              resolve();
+            });
+          });
+        }
+
         const { activeScriptId } = get();
         if (activeScriptId) {
           const content = await loadScriptContent(activeScriptId);
-          set({ activeContent: content, isLoading: false });
+          set({ activeContent: content, isLoading: false, contentReady: true });
         } else {
-          set({ isLoading: false });
+          set({ isLoading: false, contentReady: true });
         }
       },
 
@@ -76,11 +92,37 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
       },
 
       createScript: async (folderId: string, title: string) => {
-        const { scripts } = get();
+        const {
+          activeScriptId: prevId,
+          activeContent: prevContent,
+          contentReady,
+        } = get();
+
+        // Flush the previous script's in-memory content to disk before
+        // switching away — mirrors the same guard in setActiveScript.
+        if (prevId && contentReady) {
+          await saveScriptContent(prevId, prevContent);
+          const { title: prevTitle, preview: prevPreview } =
+            extractMarkdownMeta(prevContent);
+          set({
+            scripts: get().scripts.map((s) =>
+              s.id === prevId
+                ? {
+                    ...s,
+                    title: prevTitle,
+                    preview: prevPreview,
+                    updatedAt: now(),
+                  }
+                : s,
+            ),
+          });
+        }
+
+        const latestScripts = get().scripts;
         const timestamp = now();
         const id = crypto.randomUUID();
 
-        const scriptsInFolder = scripts.filter(
+        const scriptsInFolder = latestScripts.filter(
           (s) => s.folderId === folderId,
         );
 
@@ -99,10 +141,11 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
         await saveScriptContent(id, templateContent);
 
         set({
-          scripts: [...scripts, meta],
+          scripts: [...latestScripts, meta],
           activeScriptId: id,
           activeFolderId: folderId,
           activeContent: templateContent,
+          contentReady: true,
         });
       },
 
@@ -115,7 +158,10 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
             await deleteScriptFile(script.id);
           }
         } catch (error) {
-          console.error(`Failed to delete scripts in folder ${folderId}:`, error);
+          console.error(
+            `Failed to delete scripts in folder ${folderId}:`,
+            error,
+          );
           throw error;
         }
 
@@ -132,7 +178,7 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
           folders: remainingFolders,
           scripts: remainingScripts,
           ...(isActiveDeleted
-            ? { activeScriptId: null, activeContent: "" }
+            ? { activeScriptId: null, activeContent: "", contentReady: false }
             : {}),
         });
       },
@@ -153,7 +199,7 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
         set({
           scripts: remainingScripts,
           ...(isActiveDeleted
-            ? { activeScriptId: null, activeContent: "" }
+            ? { activeScriptId: null, activeContent: "", contentReady: false }
             : {}),
         });
       },
@@ -170,18 +216,18 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
       renameFolder: (folderId: string, name: string) => {
         const { folders } = get();
         set({
-          folders: folders.map((f) =>
-            f.id === folderId ? { ...f, name } : f,
-          ),
+          folders: folders.map((f) => (f.id === folderId ? { ...f, name } : f)),
           activeFolderId: folderId,
         });
       },
 
       setActiveScript: async (scriptId: string) => {
-        const { activeScriptId, activeContent, scripts } = get();
+        const { activeScriptId, activeContent, scripts, contentReady } = get();
 
-        // Flush pending content and update metadata for the previous script before switching
-        if (activeScriptId) {
+        // Flush pending content and update metadata for the previous script before switching.
+        // Only save if contentReady is true — otherwise activeContent is still the default
+        // empty string from before disk content was loaded, and saving would destroy the file.
+        if (activeScriptId && contentReady) {
           await saveScriptContent(activeScriptId, activeContent);
           const { title, preview } = extractMarkdownMeta(activeContent);
           set({
@@ -199,6 +245,7 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
           activeScriptId: scriptId,
           activeFolderId: script?.folderId ?? get().activeFolderId,
           activeContent: content,
+          contentReady: true,
         });
       },
 
@@ -207,8 +254,8 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
       },
 
       saveActiveContent: async () => {
-        const { activeScriptId, activeContent, scripts } = get();
-        if (!activeScriptId) return;
+        const { activeScriptId, activeContent, scripts, contentReady } = get();
+        if (!activeScriptId || !contentReady) return;
 
         await saveScriptContent(activeScriptId, activeContent);
 
@@ -225,9 +272,7 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
 
       reorderScripts: (folderId: string, scriptIds: string[]) => {
         const { scripts } = get();
-        const idToOrder = new Map(
-          scriptIds.map((id, index) => [id, index]),
-        );
+        const idToOrder = new Map(scriptIds.map((id, index) => [id, index]));
 
         set({
           scripts: scripts.map((s) => {

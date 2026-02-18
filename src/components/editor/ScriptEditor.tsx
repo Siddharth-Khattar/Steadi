@@ -43,11 +43,14 @@ export function ScriptEditor() {
     }
   }, []);
 
-  // Clear any pending save timeout on unmount
+  // Flush any pending debounced save on unmount instead of discarding it.
+  // On script switch setActiveScript already saves, making this a harmless
+  // no-op; on app/window close it ensures the last keystrokes reach disk.
   useEffect(() => {
     return () => {
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
+        useScriptStore.getState().saveActiveContent();
       }
     };
   }, []);

@@ -45,6 +45,15 @@ export default function MainApp() {
 
   useEffect(() => {
     useScriptStore.getState().initialize();
+
+    // Flush in-memory content to disk when the window is about to close.
+    // This covers the case where the user closes the app during the 1-second
+    // auto-save debounce window — without this, those keystrokes are lost.
+    const flushOnClose = () => {
+      useScriptStore.getState().saveActiveContent();
+    };
+    window.addEventListener("beforeunload", flushOnClose);
+    return () => window.removeEventListener("beforeunload", flushOnClose);
   }, []);
 
   if (isLoading) {
