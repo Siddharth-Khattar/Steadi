@@ -10,6 +10,10 @@ interface UseOverlayControlsReturn {
   showKeymapGuide: boolean;
   dismissKeymapGuide: () => void;
   handleContentClick: () => void;
+  /** Whether the "close overlay?" dialog is open after Esc. */
+  showEscDialog: boolean;
+  /** Called by EscActionDialog when the user selects an action. */
+  handleEscDialogClose: (action: "close" | "keep-open") => void;
 }
 
 /**
@@ -48,6 +52,13 @@ export function useOverlayControls(): UseOverlayControlsReturn {
   const [showKeymapGuide, setShowKeymapGuide] = useState(false);
   const keymapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Esc dialog state — shown when escOverlayAction is "ask"
+  const [showEscDialog, setShowEscDialog] = useState(false);
+  const showEscDialogRef = useRef(false);
+  useEffect(() => {
+    showEscDialogRef.current = showEscDialog;
+  });
+
   // Ref to read guide visibility inside handlers without adding it as
   // a dependency that causes listener re-registration.
   const showKeymapGuideRef = useRef(false);
@@ -60,6 +71,18 @@ export function useOverlayControls(): UseOverlayControlsReturn {
     if (keymapTimerRef.current !== null) {
       clearTimeout(keymapTimerRef.current);
       keymapTimerRef.current = null;
+    }
+  }, []);
+
+  /**
+   * Called by EscActionDialog when the user picks an action.
+   * If the user chose "close", hides the overlay via IPC.
+   * In both cases the dialog is dismissed.
+   */
+  const handleEscDialogClose = useCallback((action: "close" | "keep-open") => {
+    setShowEscDialog(false);
+    if (action === "close") {
+      void invoke("hide_overlay");
     }
   }, []);
 
@@ -132,13 +155,27 @@ export function useOverlayControls(): UseOverlayControlsReturn {
           e.preventDefault();
           store.togglePlay();
           break;
-        case "Escape":
+        case "Escape": {
+          // If the Esc dialog is already open, let its own capture-phase
+          // listener handle it — do not double-process.
+          if (showEscDialogRef.current) break;
+
           e.preventDefault();
           store.resetTeleprompter();
           store.setScriptContent("");
           // Restore the editor window and hide the FAB
           void invoke("restore_editor");
+
+          // Branch on saved preference
+          const action = store.escOverlayAction;
+          if (action === "close") {
+            void invoke("hide_overlay");
+          } else if (action === "ask") {
+            setShowEscDialog(true);
+          }
+          // "keep-open" → do nothing further; overlay stays visible
           break;
+        }
       }
     }
 
@@ -188,5 +225,12 @@ export function useOverlayControls(): UseOverlayControlsReturn {
     };
   }, []);
 
-  return { speedIndicator, showKeymapGuide, dismissKeymapGuide, handleContentClick };
+  return {
+    speedIndicator,
+    showKeymapGuide,
+    dismissKeymapGuide,
+    handleContentClick,
+    showEscDialog,
+    handleEscDialogClose,
+  };
 }

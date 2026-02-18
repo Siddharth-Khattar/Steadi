@@ -7,6 +7,16 @@ import { tauriJSONStorage } from "../persistence/tauriStorage";
 
 type SpeedPreset = "slow" | "medium" | "fast";
 
+/**
+ * Controls what happens to the overlay window when the user presses Escape
+ * to stop a playing teleprompter session.
+ *
+ * - "ask"        → show a dialog each time (default)
+ * - "close"      → always hide the overlay automatically
+ * - "keep-open"  → always leave the overlay visible
+ */
+export type EscOverlayAction = "ask" | "close" | "keep-open";
+
 export const SPEED_VALUES: Record<SpeedPreset, number> = {
   slow: 30,
   medium: 52,
@@ -27,6 +37,8 @@ interface TeleprompterPreferences {
   fontSize: number;
   opacity: number;
   speedPreset: SpeedPreset;
+  /** Controls overlay visibility after Esc stops the teleprompter. */
+  escOverlayAction: EscOverlayAction;
 }
 
 interface TeleprompterRuntimeState {
@@ -50,6 +62,7 @@ interface TeleprompterActions {
   increaseOpacity: () => void;
   decreaseOpacity: () => void;
   resetTeleprompter: () => void;
+  setEscOverlayAction: (action: EscOverlayAction) => void;
 }
 
 type TeleprompterStore = TeleprompterPreferences &
@@ -63,6 +76,7 @@ export const useTeleprompterStore = create<TeleprompterStore>()(
       fontSize: 16,
       opacity: 0.95,
       speedPreset: "medium" as SpeedPreset,
+      escOverlayAction: "ask" as EscOverlayAction,
 
       // Runtime state (not persisted)
       isPlaying: false,
@@ -145,23 +159,27 @@ export const useTeleprompterStore = create<TeleprompterStore>()(
           scrollProgress: 0,
         });
       },
+
+      setEscOverlayAction: (action: EscOverlayAction) => {
+        set({ escOverlayAction: action });
+      },
     }),
     {
       name: "teleprompter-store",
       storage: tauriJSONStorage,
-      version: 3,
+      version: 4,
       migrate(persistedState, version) {
         const state = persistedState as TeleprompterPreferences;
-        // Migrate any persisted store from earlier versions to the current
-        // default fontSize. Only resets if the value matches a known stale default.
+        // v4: introduce escOverlayAction preference (default "ask").
+        if (version < 4) {
+          state.escOverlayAction = "ask";
+        }
+        // v3: reset fontSize if it matches a known stale default from older versions.
         if (version < 3) {
           const STALE_FONT_DEFAULTS = [32, 24, 20, 12, 6];
-          return {
-            ...state,
-            fontSize: STALE_FONT_DEFAULTS.includes(state.fontSize)
-              ? 16
-              : state.fontSize,
-          };
+          state.fontSize = STALE_FONT_DEFAULTS.includes(state.fontSize)
+            ? 16
+            : state.fontSize;
         }
         return state;
       },
@@ -169,6 +187,7 @@ export const useTeleprompterStore = create<TeleprompterStore>()(
         fontSize: state.fontSize,
         opacity: state.opacity,
         speedPreset: state.speedPreset,
+        escOverlayAction: state.escOverlayAction,
       }),
     },
   ),

@@ -81,6 +81,7 @@ pub fn run() {
             commands::create_overlay,
             commands::start_teleprompter_session,
             commands::restore_editor,
+            commands::hide_overlay,
         ])
         .setup(|app| {
             // Register all global shortcuts individually

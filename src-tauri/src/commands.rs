@@ -20,14 +20,19 @@ pub fn create_overlay(app: AppHandle) -> Result<(), String> {
         .map_err(|e| e.to_string())
 }
 
-/// Starts a teleprompter session: hides the main editor window and shows the FAB.
+/// Starts a teleprompter session: shows the overlay, hides the main editor window, and shows the FAB.
 ///
-/// Creates the FAB window if it doesn't already exist, then shows it and
-/// hides the main editor window.
+/// Creates the FAB window if it doesn't already exist, then shows the overlay,
+/// the FAB, and hides the main editor window so the session is fully visible.
 #[tauri::command]
 pub fn start_teleprompter_session(app: AppHandle) -> Result<(), String> {
     // Ensure FAB exists
     editor_fab::create_editor_fab(&app).map_err(|e| e.to_string())?;
+
+    // Ensure the overlay is visible for the session
+    if let Some(overlay) = app.webview_windows().get("overlay") {
+        overlay.show().map_err(|e| e.to_string())?;
+    }
 
     // Show the FAB
     if let Some(fab) = app.webview_windows().get("editor-fab") {
@@ -39,6 +44,18 @@ pub fn start_teleprompter_session(app: AppHandle) -> Result<(), String> {
         main_win.hide().map_err(|e| e.to_string())?;
     }
 
+    Ok(())
+}
+
+/// Hides the overlay window.
+///
+/// Called from the overlay's Esc handler when the user has chosen to close
+/// the overlay after stopping the teleprompter.
+#[tauri::command]
+pub fn hide_overlay(app: AppHandle) -> Result<(), String> {
+    if let Some(overlay) = app.webview_windows().get("overlay") {
+        overlay.hide().map_err(|e| e.to_string())?;
+    }
     Ok(())
 }
 

@@ -32,7 +32,7 @@ pub fn create_overlay(app: &AppHandle) -> tauri::Result<WebviewWindow> {
             .shadow(false)
             .skip_taskbar(true)
             .resizable(true)
-            .visible(true)
+            .visible(false)
             .content_protected(true)
             .inner_size(overlay_width, overlay_height)
             .position(x, y)

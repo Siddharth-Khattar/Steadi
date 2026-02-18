@@ -17,6 +17,7 @@ import { WindowControls } from "./components/WindowControls";
 import { KeymapGuide } from "./components/KeymapGuide";
 import { ControlHints } from "./components/ControlHints";
 import { MonitorCycleButton } from "./components/MonitorCycleButton";
+import { EscActionDialog } from "./components/EscActionDialog";
 
 /**
  * The overlay window is transparent (set in index.html). The dark background
@@ -80,8 +81,14 @@ export default function OverlayApp() {
     onScrollDown: handleScrollDown,
   });
 
-  const { speedIndicator, showKeymapGuide, dismissKeymapGuide, handleContentClick } =
-    useOverlayControls();
+  const {
+    speedIndicator,
+    showKeymapGuide,
+    dismissKeymapGuide,
+    handleContentClick,
+    showEscDialog,
+    handleEscDialogClose,
+  } = useOverlayControls();
 
   useOverlayGeometry();
 
@@ -110,7 +117,10 @@ export default function OverlayApp() {
 
         {scriptContent ? (
           <>
-            <TeleprompterView containerRef={scrollContainerRef} onClick={handleContentClick} />
+            <TeleprompterView
+              containerRef={scrollContainerRef}
+              onClick={handleContentClick}
+            />
             <ProgressBar />
             {showCountdown && <Countdown />}
           </>
@@ -122,6 +132,9 @@ export default function OverlayApp() {
 
         <KeymapGuide visible={showKeymapGuide} onDismiss={dismissKeymapGuide} />
       </div>
+
+      {/* Esc stop dialog — asks whether to also hide the overlay window */}
+      <EscActionDialog open={showEscDialog} onClose={handleEscDialogClose} />
 
       {/* Control hints below the overlay, in the transparent window area */}
       {scriptContent && <ControlHints />}
