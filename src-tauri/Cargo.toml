@@ -1,8 +1,10 @@
 [package]
 name = "steadi"
-version = "0.0.3"
+version = "0.0.4"
 description = "Cross-platform invisible teleprompter"
-authors = ["you"]
+authors = ["Siddharth Khattar"]
+license = "MIT"
+repository = "https://github.com/Siddharth-Khattar/Steadi"
 edition = "2021"
 
 [lib]

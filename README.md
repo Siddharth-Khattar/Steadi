@@ -54,7 +54,7 @@ curl -fsSL https://raw.githubusercontent.com/Siddharth-Khattar/Steadi/main/insta
 Pin a specific version:
 
 ```sh
-STEADI_VERSION=v0.0.3 curl -fsSL https://raw.githubusercontent.com/Siddharth-Khattar/Steadi/main/install.sh | sh
+STEADI_VERSION=v0.0.4 curl -fsSL https://raw.githubusercontent.com/Siddharth-Khattar/Steadi/main/install.sh | sh
 ```
 
 ### Manual download (Windows)

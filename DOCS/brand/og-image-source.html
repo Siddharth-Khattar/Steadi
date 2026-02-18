@@ -1,0 +1,197 @@
+<!--
+ABOUTME: Canonical source for og-image.png (1280×640 social preview).
+ABOUTME: Re-render with: /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --headless=new --no-sandbox --disable-gpu --window-size=1280,640 --force-device-scale-factor=1 --screenshot=og-image.png "file://$(pwd)/og-image-source.html"
+-->
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1280px;
+        height: 640px;
+        overflow: hidden;
+        background: #0d1020;
+      }
+      svg {
+        display: block;
+        width: 1280px;
+        height: 640px;
+      }
+    </style>
+  </head>
+  <body>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1280"
+      height="640"
+      viewBox="0 0 1280 640"
+    >
+      <defs>
+        <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color: #0d1020; stop-opacity: 1" />
+          <stop offset="100%" style="stop-color: #171c30; stop-opacity: 1" />
+        </linearGradient>
+        <radialGradient id="ambientGlow" cx="50%" cy="50%" r="60%">
+          <stop offset="0%" style="stop-color: #2a3060; stop-opacity: 0.32" />
+          <stop offset="100%" style="stop-color: #0d1020; stop-opacity: 0" />
+        </radialGradient>
+        <linearGradient id="iconGlass" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color: #1e2235; stop-opacity: 1" />
+          <stop offset="50%" style="stop-color: #252a40; stop-opacity: 1" />
+          <stop offset="100%" style="stop-color: #1a1f32; stop-opacity: 1" />
+        </linearGradient>
+        <radialGradient id="iconShine" cx="30%" cy="25%" r="60%">
+          <stop offset="0%" style="stop-color: #ffffff; stop-opacity: 0.07" />
+          <stop offset="100%" style="stop-color: #ffffff; stop-opacity: 0" />
+        </radialGradient>
+        <filter id="iconShadow" x="-15%" y="-10%" width="140%" height="140%">
+          <feDropShadow
+            dx="0"
+            dy="10"
+            stdDeviation="22"
+            flood-color="#060810"
+            flood-opacity="0.7"
+          />
+        </filter>
+        <filter id="iconGlow" x="-20%" y="-40%" width="140%" height="180%">
+          <feGaussianBlur stdDeviation="3" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+
+      <!-- Background -->
+      <rect width="1280" height="640" fill="url(#bg)" />
+      <rect width="1280" height="640" fill="url(#ambientGlow)" />
+
+      <!-- Icon (280×280, center at 452,320) -->
+      <svg
+        x="312"
+        y="180"
+        width="280"
+        height="280"
+        viewBox="0 0 512 512"
+        overflow="visible"
+      >
+        <rect
+          x="36"
+          y="36"
+          width="440"
+          height="440"
+          rx="100"
+          ry="100"
+          fill="url(#iconGlass)"
+          filter="url(#iconShadow)"
+        />
+        <rect
+          x="36"
+          y="36"
+          width="440"
+          height="440"
+          rx="100"
+          ry="100"
+          fill="url(#iconShine)"
+        />
+        <rect
+          x="36"
+          y="36"
+          width="440"
+          height="440"
+          rx="100"
+          ry="100"
+          fill="none"
+          stroke="white"
+          stroke-opacity="0.1"
+          stroke-width="1.5"
+        />
+        <line
+          x1="120"
+          y1="140"
+          x2="392"
+          y2="140"
+          stroke="white"
+          stroke-width="4"
+          stroke-linecap="round"
+          opacity="0.8"
+        />
+        <path
+          d="M 168,155 C 168,165 180,195 206,195 L 306,195 C 332,195 344,165 344,155"
+          fill="none"
+          stroke="white"
+          stroke-opacity="0.75"
+          stroke-width="3.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          filter="url(#iconGlow)"
+        />
+        <g filter="url(#iconGlow)">
+          <line
+            x1="182"
+            y1="240"
+            x2="330"
+            y2="240"
+            stroke="white"
+            stroke-width="5"
+            stroke-linecap="round"
+            opacity="0.6"
+          />
+          <line
+            x1="198"
+            y1="278"
+            x2="314"
+            y2="278"
+            stroke="white"
+            stroke-width="5"
+            stroke-linecap="round"
+            opacity="0.35"
+          />
+          <line
+            x1="214"
+            y1="316"
+            x2="298"
+            y2="316"
+            stroke="white"
+            stroke-width="5"
+            stroke-linecap="round"
+            opacity="0.18"
+          />
+        </g>
+      </svg>
+
+      <!-- Wordmark -->
+      <text
+        x="648"
+        y="330"
+        font-family="Inter, -apple-system, 'Segoe UI', Helvetica, sans-serif"
+        font-size="88"
+        font-weight="500"
+        letter-spacing="9"
+        fill="#C8CEDE"
+      >
+        steadi
+      </text>
+
+      <!-- Tagline -->
+      <text
+        x="650"
+        y="378"
+        font-family="Inter, -apple-system, 'Segoe UI', Helvetica, sans-serif"
+        font-size="20"
+        font-weight="400"
+        letter-spacing="0.5"
+        fill="#5C6485"
+      >
+        Cross-platform invisible teleprompter
+      </text>
+    </svg>
+  </body>
+</html>

@@ -98,20 +98,22 @@ jobs:
             brew install --cask steadi
             ```
 
-            **Shell script**:
+            **Shell script** (macOS):
             ```sh
             curl -fsSL https://raw.githubusercontent.com/Siddharth-Khattar/Steadi/main/install.sh | sh
             ```
 
-            ## Downloads
+            ## Manual Download
 
-            | Platform | File |
-            |----------|------|
-            | macOS (Apple Silicon) | `Steadi_*_aarch64.dmg` |
-            | macOS (Intel) | `Steadi_*_x64.dmg` |
-            | Windows | `Steadi_*_x64-setup.exe` |
+            | Platform | Architecture | File |
+            |----------|-------------|------|
+            | macOS | Apple Silicon (M1/M2/M3/M4) | `Steadi_*_aarch64.dmg` |
+            | macOS | Intel | `Steadi_*_x64.dmg` |
+            | Windows | 64-bit | `Steadi_*_x64-setup.exe` |
 
-            > **macOS Gatekeeper note:** Steadi is not code-signed. If you download a DMG manually,
+            > **Not sure which macOS file?** Click  → **About This Mac**. If the chip says "Apple M…" use the `aarch64` DMG, otherwise use the `x64` DMG.
+
+            > **macOS Gatekeeper note:** Steadi is not yet code-signed. If you download a DMG directly,
             > macOS may show "app is damaged." Use one of the install methods above, or after a
             > manual install run: `xattr -cr /Applications/Steadi.app`
 
@@ -125,7 +127,7 @@ jobs:
         run: |
           mkdir -p installers
           find src-tauri/target -path "*/release/bundle/*" -type f \
-            \( -name "*.dmg" -o -name "*.exe" -o -name "*.msi" -o -name "*.AppImage" -o -name "*.deb" \) \
+            \( -name "*.dmg" -o -name "*.exe" \) \
             -exec cp {} installers/ \;
           echo "Collected installers:"
           ls -lh installers/

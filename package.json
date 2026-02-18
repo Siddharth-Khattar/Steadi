@@ -1,7 +1,22 @@
 {
   "name": "steadi",
   "private": true,
-  "version": "0.0.3",
+  "version": "0.0.4",
+  "description": "Cross-platform invisible teleprompter hidden from screen sharing",
+  "license": "MIT",
+  "homepage": "https://github.com/Siddharth-Khattar/Steadi",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Siddharth-Khattar/Steadi.git"
+  },
+  "keywords": [
+    "teleprompter",
+    "screen-sharing",
+    "overlay",
+    "tauri",
+    "markdown",
+    "productivity"
+  ],
   "type": "module",
   "scripts": {
     "dev": "vite",
