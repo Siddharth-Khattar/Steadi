@@ -71,7 +71,7 @@ export function ScriptEditor() {
 
   if (!activeScriptId) {
     return (
-      <div className="h-full flex items-center justify-center">
+      <div className="absolute inset-0 flex items-center justify-center">
         <p className="text-white/40 text-sm">
           Select or create a script to start writing
         </p>
@@ -81,11 +81,13 @@ export function ScriptEditor() {
 
   return (
     <div
-      className="h-full overflow-hidden [&_.cm-editor]:h-full"
+      className="absolute inset-0 overflow-hidden"
       style={{ userSelect: "text", WebkitUserSelect: "text" }}
     >
       <CodeMirror
         key={activeScriptId}
+        className="h-full"
+        height="100%"
         value={activeContent}
         onChange={handleChange}
         theme={steadiEditorTheme}

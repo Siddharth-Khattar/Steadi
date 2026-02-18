@@ -32,9 +32,7 @@ const markdownComponents: Components = {
   strong: ({ children }) => (
     <strong className="font-semibold text-white/90">{children}</strong>
   ),
-  em: ({ children }) => (
-    <em className="italic text-white/75">{children}</em>
-  ),
+  em: ({ children }) => <em className="italic text-white/75">{children}</em>,
   ul: ({ children }) => (
     <ul className="list-disc list-inside text-white/80 mb-3 space-y-1">
       {children}
@@ -90,15 +88,18 @@ export function MarkdownPreview() {
 
   if (!activeContent) {
     return (
-      <div className="h-full flex items-center justify-center">
+      <div className="absolute inset-0 flex items-center justify-center">
         <p className="text-white/30 text-sm">Preview will appear here</p>
       </div>
     );
   }
 
   return (
-    <div className="h-full overflow-auto bg-white/3 px-6 py-6">
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+    <div className="absolute inset-0 overflow-auto bg-white/3 px-6 py-6">
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={markdownComponents}
+      >
         {activeContent}
       </ReactMarkdown>
     </div>

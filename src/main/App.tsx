@@ -72,7 +72,7 @@ export default function MainApp() {
 function ContentArea({ previewVisible }: { previewVisible: boolean }) {
   if (!previewVisible) {
     return (
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-hidden relative">
         <ScriptEditor />
       </div>
     );
@@ -80,11 +80,11 @@ function ContentArea({ previewVisible }: { previewVisible: boolean }) {
 
   return (
     <Group orientation="horizontal" className="flex-1 overflow-hidden">
-      <Panel id="editor" defaultSize={50} minSize={30}>
+      <Panel id="editor" defaultSize={50} minSize={30} className="relative">
         <ScriptEditor />
       </Panel>
       <Separator className="w-px bg-white/10 hover:bg-white/20 transition-colors cursor-col-resize" />
-      <Panel id="preview" defaultSize={50} minSize={20}>
+      <Panel id="preview" defaultSize={50} minSize={20} className="relative">
         <MarkdownPreview />
       </Panel>
     </Group>
