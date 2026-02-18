@@ -6,7 +6,7 @@ import {
   currentMonitor,
   availableMonitors,
 } from "@tauri-apps/api/window";
-import { LogicalPosition } from "@tauri-apps/api/dpi";
+import { PhysicalPosition } from "@tauri-apps/api/dpi";
 import type { Monitor } from "@tauri-apps/api/window";
 import { snapToMonitorTopCenter } from "./snapToMonitorTopCenter";
 
@@ -17,6 +17,9 @@ import { snapToMonitorTopCenter } from "./snapToMonitorTopCenter";
  * in the `availableMonitors()` list (wrapping around), moves the window onto
  * that monitor, then delegates to `snapToMonitorTopCenter()` for precise
  * centering (avoids cross-DPI scale factor mismatches).
+ *
+ * Uses physical coordinates for the initial move to prevent DPI mismatch
+ * issues when the source and target monitors have different scale factors.
  *
  * No-op if only one monitor is available.
  */
@@ -34,13 +37,12 @@ export async function cycleMonitor(): Promise<void> {
 
   const nextIndex = (currentIndex + 1) % monitors.length;
   const target = monitors[nextIndex];
-  const scale = target.scaleFactor;
 
-  // Move to the target monitor's origin so currentMonitor() will resolve
-  // to the target. The snap call below handles precise centering.
-  const targetX = Math.round(target.position.x / scale);
-  const targetY = Math.round(target.position.y / scale);
-  await appWindow.setPosition(new LogicalPosition(targetX, targetY));
+  // Move to the target monitor's origin using physical coordinates so the
+  // position is unambiguous regardless of the source monitor's DPI.
+  await appWindow.setPosition(
+    new PhysicalPosition(target.position.x, target.position.y),
+  );
 
   // Snap to top-center using the target monitor's actual dimensions/scale
   await snapToMonitorTopCenter();

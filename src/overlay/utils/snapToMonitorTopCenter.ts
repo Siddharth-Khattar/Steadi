@@ -6,7 +6,7 @@ import {
   currentMonitor,
   primaryMonitor,
 } from "@tauri-apps/api/window";
-import { LogicalPosition } from "@tauri-apps/api/dpi";
+import { PhysicalPosition } from "@tauri-apps/api/dpi";
 
 /** Geometry returned after snapping, in logical pixels. */
 export interface SnappedGeometry {
@@ -21,31 +21,43 @@ export interface SnappedGeometry {
  * it's currently on. Falls back to the primary monitor if `currentMonitor()`
  * returns null (e.g. window is between screens during a drag).
  *
+ * Uses physical coordinates for `setPosition` to avoid cross-platform
+ * logical-to-physical conversion issues (see editor_fab.rs for rationale).
+ *
  * @returns The snapped geometry in logical pixels, for persistence.
  */
 export async function snapToMonitorTopCenter(): Promise<SnappedGeometry> {
   const appWindow = getCurrentWindow();
 
-  const monitor =
-    (await currentMonitor()) ?? (await primaryMonitor());
+  const monitor = (await currentMonitor()) ?? (await primaryMonitor());
 
   if (!monitor) {
     throw new Error("No monitor available for snap positioning");
   }
 
   const scale = monitor.scaleFactor;
-  const monitorX = monitor.position.x / scale;
-  const monitorY = monitor.position.y / scale;
-  const monitorWidth = monitor.size.width / scale;
 
+  // Monitor position is already in physical pixels.
+  const monPhysX = monitor.position.x;
+  const monPhysY = monitor.position.y;
+  const monPhysW = monitor.size.width;
+
+  // Current overlay size in physical pixels.
   const physSize = await appWindow.innerSize();
+
+  // Center the overlay horizontally within the monitor, in physical pixels.
+  const physX = Math.round(monPhysX + (monPhysW - physSize.width) / 2);
+  const physY = Math.round(monPhysY);
+
+  await appWindow.setPosition(new PhysicalPosition(physX, physY));
+
+  // Return logical values for persistence.
   const overlayWidth = physSize.width / scale;
   const overlayHeight = physSize.height / scale;
-
-  const x = Math.round(monitorX + (monitorWidth - overlayWidth) / 2);
-  const y = Math.round(monitorY);
-
-  await appWindow.setPosition(new LogicalPosition(x, y));
-
-  return { x, y, width: overlayWidth, height: overlayHeight };
+  return {
+    x: physX / scale,
+    y: physY / scale,
+    width: overlayWidth,
+    height: overlayHeight,
+  };
 }

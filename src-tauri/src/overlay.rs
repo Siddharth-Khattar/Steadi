@@ -2,7 +2,7 @@
 // ABOUTME: Uses native macOS APIs for solid black background with bottom-only rounded corners.
 
 use tauri::webview::WebviewWindowBuilder;
-use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindow};
+use tauri::{AppHandle, Manager, PhysicalPosition, WebviewUrl, WebviewWindow};
 
 /// Creates the overlay window with screen capture exclusion and platform-specific styling.
 ///
@@ -11,18 +11,30 @@ use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindow};
 /// - Always on top of other windows
 /// - Protected from screen capture (content_protected)
 /// - Positioned at top-center of screen below menu bar
+///
+/// Position is set AFTER creation via `set_position(PhysicalPosition)` to
+/// avoid cross-platform logical-to-physical conversion issues in the builder
+/// (see `editor_fab::create_editor_fab` for detailed rationale).
 pub fn create_overlay(app: &AppHandle) -> tauri::Result<WebviewWindow> {
     let monitor = app
         .primary_monitor()?
         .ok_or_else(|| tauri::Error::Anyhow(anyhow::anyhow!("No primary monitor found")))?;
 
     let scale = monitor.scale_factor();
-    let screen_width = monitor.size().width as f64 / scale;
-    let overlay_width = screen_width * 0.4;
-    let overlay_height = 140.0;
-    let x = (screen_width - overlay_width) / 2.0;
-    let y = 0.0;
+    let phys_width = monitor.size().width as f64;
+    let phys_mon_x = monitor.position().x as f64;
 
+    // Overlay width/height in logical points, used for inner_size.
+    let screen_width_logical = phys_width / scale;
+    let overlay_width = screen_width_logical * 0.4;
+    let overlay_height = 140.0;
+
+    // Compute centered position in physical pixels.
+    let overlay_phys_width = overlay_width * scale;
+    let phys_x = phys_mon_x + (phys_width - overlay_phys_width) / 2.0;
+    let phys_y = monitor.position().y as f64;
+
+    // Build the window without position — it's created hidden so no flash.
     let overlay =
         WebviewWindowBuilder::new(app, "overlay", WebviewUrl::App("overlay/index.html".into()))
             .title("Steadi Overlay")
@@ -35,8 +47,10 @@ pub fn create_overlay(app: &AppHandle) -> tauri::Result<WebviewWindow> {
             .visible(false)
             .content_protected(true)
             .inner_size(overlay_width, overlay_height)
-            .position(x, y)
             .build()?;
+
+    // Place the window using unambiguous physical coordinates.
+    overlay.set_position(PhysicalPosition::new(phys_x as i32, phys_y as i32))?;
 
     #[cfg(target_os = "macos")]
     apply_bottom_rounded_corners(&overlay);
