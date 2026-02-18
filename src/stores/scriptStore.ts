@@ -13,6 +13,12 @@ import {
 import { tauriJSONStorage } from "../persistence/tauriStorage";
 import { extractMarkdownMeta } from "../persistence/markdownMeta";
 
+type SaveStatus = "idle" | "saving" | "saved";
+
+/** Module-scoped timer for resetting saveStatus back to "idle" after a brief "saved" display. */
+let saveStatusResetTimer: ReturnType<typeof setTimeout> | null = null;
+const SAVE_STATUS_DISPLAY_MS = 2000;
+
 interface ScriptState {
   folders: Folder[];
   scripts: ScriptMeta[];
@@ -22,6 +28,12 @@ interface ScriptState {
   isLoading: boolean;
   /** True once disk content has been loaded for the current active script. Prevents saving stale/empty content. */
   contentReady: boolean;
+  /** Visual save status for UI feedback. Transitions: idle → saving → saved → idle. */
+  saveStatus: SaveStatus;
+  /** Whether activeContent has been modified since the last disk save. */
+  isDirty: boolean;
+  /** ISO timestamp of the last successful save, for "saved X ago" display. */
+  lastSavedAt: string | null;
 }
 
 interface ScriptActions {
@@ -54,6 +66,9 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
       activeContent: "",
       isLoading: true,
       contentReady: false,
+      saveStatus: "idle",
+      isDirty: false,
+      lastSavedAt: null,
 
       initialize: async () => {
         await initScriptsDir();
@@ -146,6 +161,7 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
           activeFolderId: folderId,
           activeContent: templateContent,
           contentReady: true,
+          isDirty: false,
         });
       },
 
@@ -246,18 +262,28 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
           activeFolderId: script?.folderId ?? get().activeFolderId,
           activeContent: content,
           contentReady: true,
+          isDirty: false,
         });
       },
 
       setContent: (content: string) => {
-        set({ activeContent: content });
+        set({ activeContent: content, isDirty: true });
       },
 
       saveActiveContent: async () => {
         const { activeScriptId, activeContent, scripts, contentReady } = get();
         if (!activeScriptId || !contentReady) return;
 
-        await saveScriptContent(activeScriptId, activeContent);
+        if (saveStatusResetTimer) clearTimeout(saveStatusResetTimer);
+        set({ saveStatus: "saving" });
+
+        try {
+          await saveScriptContent(activeScriptId, activeContent);
+        } catch (error) {
+          console.error("Failed to save script content:", error);
+          set({ saveStatus: "idle" });
+          return;
+        }
 
         const { title, preview } = extractMarkdownMeta(activeContent);
 
@@ -267,7 +293,14 @@ export const useScriptStore = create<ScriptState & ScriptActions>()(
               ? { ...s, title, preview, updatedAt: now() }
               : s,
           ),
+          saveStatus: "saved",
+          isDirty: false,
+          lastSavedAt: now(),
         });
+
+        saveStatusResetTimer = setTimeout(() => {
+          set({ saveStatus: "idle" });
+        }, SAVE_STATUS_DISPLAY_MS);
       },
 
       reorderScripts: (folderId: string, scriptIds: string[]) => {

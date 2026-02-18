@@ -48,7 +48,7 @@ export function ConfirmDialog({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center"
+      className="fixed inset-0 z-100 flex items-center justify-center"
       onMouseDown={(e) => {
         // Dismiss on backdrop click (only direct clicks on the backdrop)
         if (e.target === e.currentTarget) {

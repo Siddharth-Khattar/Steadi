@@ -205,7 +205,7 @@ export function FolderItem({
       {!folder.isCollapsed && (
         <div
           ref={setDroppableRef}
-          className={`pl-2 min-h-[8px] rounded transition-colors ${
+          className={`pl-2 min-h-2 rounded transition-colors ${
             isOver ? "bg-white/5" : ""
           }`}
         >
@@ -236,7 +236,7 @@ export function FolderItem({
       {contextMenu && (
         <div
           ref={contextMenuRef}
-          className="fixed z-50 min-w-[120px] rounded-md bg-neutral-900 border border-white/15 shadow-xl py-1"
+          className="fixed z-50 min-w-30 rounded-md bg-neutral-900 border border-white/15 shadow-xl py-1"
           style={{ left: contextMenu.x, top: contextMenu.y }}
         >
           <button

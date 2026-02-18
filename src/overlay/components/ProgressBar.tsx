@@ -17,7 +17,7 @@ export function ProgressBar() {
   if (progress <= 0) return null;
 
   return (
-    <div className="absolute bottom-0 left-0 w-full h-[4px] z-20">
+    <div className="absolute bottom-0 left-0 w-full h-1 z-20">
       <div
         className="h-full bg-emerald-400 rounded-r-full shadow-[0_0_6px_rgba(52,211,153,0.5)]"
         style={{

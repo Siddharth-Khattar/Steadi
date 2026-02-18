@@ -48,6 +48,7 @@ export function ScriptItem({ id, title, preview, isActive }: ScriptItemProps) {
 
   const setActiveScript = useScriptStore((s) => s.setActiveScript);
   const deleteScript = useScriptStore((s) => s.deleteScript);
+  const isDirty = useScriptStore((s) => s.isDirty);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -156,8 +157,13 @@ export function ScriptItem({ id, title, preview, isActive }: ScriptItemProps) {
           </svg>
         </div>
 
-        <div className="text-sm text-white/90 font-medium truncate">
-          {title}
+        <div className="flex items-center gap-1.5 min-w-0">
+          <span className="text-sm text-white/90 font-medium truncate">
+            {title}
+          </span>
+          {isActive && isDirty && (
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400/70 shrink-0" />
+          )}
         </div>
         <div className="text-xs text-white/40 truncate mt-0.5">{preview}</div>
       </div>
@@ -165,7 +171,7 @@ export function ScriptItem({ id, title, preview, isActive }: ScriptItemProps) {
       {contextMenu && (
         <div
           ref={contextMenuRef}
-          className="fixed z-50 min-w-[120px] rounded-md bg-neutral-900 border border-white/15 shadow-xl py-1"
+          className="fixed z-50 min-w-30 rounded-md bg-neutral-900 border border-white/15 shadow-xl py-1"
           style={{ left: contextMenu.x, top: contextMenu.y }}
         >
           <button

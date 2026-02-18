@@ -55,6 +55,22 @@ export function ScriptEditor() {
     };
   }, []);
 
+  // Cmd/Ctrl+S: immediately flush to disk instead of waiting for the debounce timer.
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "s") {
+        e.preventDefault();
+        if (saveTimeoutRef.current) {
+          clearTimeout(saveTimeoutRef.current);
+          saveTimeoutRef.current = null;
+        }
+        saveActiveContent();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [saveActiveContent]);
+
   const handleChange = useCallback(
     (value: string) => {
       // Update in-memory state immediately
