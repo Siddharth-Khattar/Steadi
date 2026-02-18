@@ -111,13 +111,25 @@ function ContentArea({ previewVisible }: { previewVisible: boolean }) {
 
   return (
     <Group orientation="horizontal" className="flex-1 overflow-hidden">
-      <Panel id="editor" defaultSize={50} minSize={30} className="relative">
+      <Panel
+        id="editor"
+        defaultSize={50}
+        minSize="20%"
+        maxSize="80%"
+        className="relative"
+      >
         <Suspense fallback={<PanelLoader />}>
           <ScriptEditor />
         </Suspense>
       </Panel>
       <Separator className="w-px bg-white/10 hover:bg-white/20 transition-colors cursor-col-resize" />
-      <Panel id="preview" defaultSize={50} minSize={20} className="relative">
+      <Panel
+        id="preview"
+        defaultSize={50}
+        minSize="20%"
+        maxSize="80%"
+        className="relative"
+      >
         <Suspense fallback={<PanelLoader />}>
           <MarkdownPreview />
         </Suspense>
