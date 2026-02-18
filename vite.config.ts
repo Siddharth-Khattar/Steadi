@@ -39,6 +39,78 @@ export default defineConfig({
         overlay: resolve(__dirname, "src/overlay/index.html"),
         "editor-fab": resolve(__dirname, "src/editor-fab/index.html"),
       },
+      output: {
+        manualChunks(id: string) {
+          if (!id.includes("node_modules")) return;
+
+          // React core — shared by all entry points
+          if (
+            id.includes("/react-dom/") ||
+            id.includes("/react/") ||
+            id.includes("/scheduler/")
+          ) {
+            return "vendor-react";
+          }
+
+          // CodeMirror core — view, state, and tightly coupled internals
+          if (
+            id.includes("/@codemirror/view") ||
+            id.includes("/@codemirror/state") ||
+            id.includes("/crelt/") ||
+            id.includes("/style-mod/") ||
+            id.includes("/w3c-keyname/")
+          ) {
+            return "vendor-cm-core";
+          }
+
+          // CodeMirror extensions, language support, and React wrappers
+          if (
+            id.includes("/@codemirror/") ||
+            id.includes("/@uiw/react-codemirror") ||
+            id.includes("/@uiw/codemirror-") ||
+            id.includes("/@lezer/") ||
+            id.includes("/codemirror/")
+          ) {
+            return "vendor-cm-ext";
+          }
+
+          // Markdown rendering — shared by main (preview) and overlay
+          if (
+            id.includes("/react-markdown/") ||
+            id.includes("/remark-") ||
+            id.includes("/unified/") ||
+            id.includes("/mdast-") ||
+            id.includes("/micromark") ||
+            id.includes("/unist-") ||
+            id.includes("/hast-") ||
+            id.includes("/devlop/") ||
+            id.includes("/vfile") ||
+            id.includes("/bail/") ||
+            id.includes("/trough/") ||
+            id.includes("/property-information/") ||
+            id.includes("/space-separated-tokens/") ||
+            id.includes("/comma-separated-tokens/") ||
+            id.includes("/ccount/") ||
+            id.includes("/decode-named-character-reference/") ||
+            id.includes("/trim-lines/") ||
+            id.includes("/html-void-elements/") ||
+            id.includes("/stringify-entities/") ||
+            id.includes("/character-entities")
+          ) {
+            return "vendor-markdown";
+          }
+
+          // Drag-and-drop — only used by main window sidebar
+          if (id.includes("/@dnd-kit/")) {
+            return "vendor-dnd";
+          }
+
+          // Tauri APIs — shared by all entry points
+          if (id.includes("/@tauri-apps/")) {
+            return "vendor-tauri";
+          }
+        },
+      },
     },
   },
 });
